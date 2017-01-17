@@ -1,0 +1,16 @@
+This directory contains the script files themselves. Copy the contents of this
+directory to one of your FrontPanel Designer script directories.
+
+For Linux, use either:
+
+  /usr/share/FrontDesign/Scripts/
+
+  or
+
+  ~/.frontdesign/Scripts/
+
+
+Under Windows, use:
+
+   C:\Program Files\FrontDesign\Scripts\
+
