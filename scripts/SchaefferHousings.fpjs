@@ -216,20 +216,20 @@ if (C_UI)	{
 
 
 function showUI()	{
-
-	var d = new Dialog("Enclosure Type",300,200); // create the dialog window
+	
+        var d = new Dialog(_("Enclosure Type"),300,200); // create the dialog window
 	d.Newline().VSpacer(0).NewlineC();
-
+	
 	var enclosureType = new Param(C_SchaefferHousings_UI_type-1);
-	d.Spacer(25).Text("Choose type of enclosure:").NewlineC();
-	d.Spacer(25).RadioBox(enclosureType, " \nHousing with side profiles\nHousing with enclosure profiles").Spacer(25).Newline();
+	d.Spacer(25).Text(_("Choose type of enclosure:")).NewlineC();
+	d.Spacer(25).RadioBox(enclosureType, _(" \nHousing with side profiles\nHousing with enclosure profiles")).Spacer(25).Newline();
 	d.VSpacer(0).NewlineC();
-
+	
 	d.Divider().NewlineC();
-
+	
 	// And an "Ok" button, which, when pressed, will close
 	// the dialog, returning 1 from Show().
-	d.Spacer(0).DlgButton(1, "Ok!").Spacer(0);
+	d.Spacer(0).DlgButton(1, _("Ok!")).Spacer(0);
 	// Show dialog, pressed button is returned but not used
 	// in this example.
 	var b = d.Show();
@@ -238,72 +238,72 @@ function showUI()	{
 	
 	
 	C_type = enclosureType.get()+1; 
-
+	
 	if (enclosureType.get()+1==1)	{
-		var d = new Dialog("Housing with side profiles",500,100); // create the dialog window
+		var d = new Dialog(_("Housing with side profiles"),500,100); // create the dialog window
 		d.Newline().VSpacer(0).NewlineC();
 	
 		var sideSectionHeight = new Param(C_SchaefferHousings_UI_sideSectionHeight);
-		d.Spacer(25).Text("Height:");
-		d.Spacer(6).RadioBox(sideSectionHeight, " \nSide Section 1 (42 mm)\nSide Section 2 (56mm)").Spacer(0).NewlineC();
+		d.Spacer(25).Text(_("Height:"));
+		d.Spacer(6).RadioBox(sideSectionHeight, _(" \nSide Section 1 (42 mm)\nSide Section 2 (56mm)")).Spacer(0).NewlineC();
 	} else if (enclosureType.get()+1==2)	{
-		var d = new Dialog("Housing with enclosure profiles",500,100); // create the dialog window
+		var d = new Dialog(_("Housing with enclosure profiles"),500,100); // create the dialog window
 		d.Newline().VSpacer(0).NewlineC();
 	
 		var height = new Param(C_SchaefferHousings_UI_height.toString());
-		d.Spacer(25).Text("Height:");
-		d.Spacer(10).TextEntry(1, height).Spacer(5).Text("mm").Spacer(0).NewlineC();
+		d.Spacer(25).Text(_("Height:"));
+		d.Spacer(10).TextEntry(1, height).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
 	}
-
+	
 	var width = new Param(C_SchaefferHousings_UI_width.toString());
-	d.Spacer(25).Text("Width:");
-	d.Spacer(13).TextEntry(1, width).Spacer(5).Text("mm").Spacer(0).NewlineC();
+	d.Spacer(25).Text(_("Width:"));
+	d.Spacer(13).TextEntry(1, width).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
 
 	var rack = new Param(C_SchaefferHousings_UI_rack);
 	if (enclosureType.get()+1==1)	{
-		d.Spacer(25).Spacer(25).Spacer(25).CheckBox(rack, "Make it a Rack Unit? (overrides Width)").Spacer(5).NewlineC();
+		d.Spacer(25).Spacer(25).Spacer(25).CheckBox(rack, _("Make it a Rack Unit? (overrides Width)")).Spacer(5).NewlineC();
 	} else if (enclosureType.get()+1==2)	{
-		d.Spacer(25).Spacer(25).Spacer(25).Text("Rack Unit:").Spacer(5).RadioBox(rack," \nNone\n1U Rack Unit\n2U Rack Unit\n3U Rack Unit").Spacer(5).Text("(Overrides width/height)").Spacer(0).NewlineC();
+		d.Spacer(25).Spacer(25).Spacer(25).Text(_("Rack Unit:")).Spacer(5).RadioBox(rack,_(" \nNone\n1U Rack Unit\n2U Rack Unit\n3U Rack Unit")).Spacer(5).Text(_("(Overrides width/height)")).Spacer(0).NewlineC();
 	}
-	
-	var depth = new Param(C_SchaefferHousings_UI_depth.toString());
-	d.Spacer(25).Text("Depth:");
-	d.Spacer(10).TextEntry(1, depth).Spacer(5).Text("mm").Spacer(0).NewlineC();
+
+        var depth = new Param(C_SchaefferHousings_UI_depth.toString());
+        d.Spacer(25).Text(_("Depth:"));
+	d.Spacer(10).TextEntry(1, depth).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
 
 	d.VSpacer(10).Newline();
 
 	var thickness = new Param(C_SchaefferHousings_UI_thickness);
-	d.Spacer(25).Text("Thickness of panels:").NewlineC();
-	d.Spacer(25).RadioBox(thickness, " \n2 mm\n2.5 mm\n3 mm\n4 mm").Spacer(0).NewlineC();
+	d.Spacer(25).Text(_("Thickness of panels:")).NewlineC();
+	d.Spacer(25).RadioBox(thickness, _(" \n2 mm\n2.5 mm\n3 mm\n4 mm")).Spacer(0).NewlineC();
 	var thicknessCodes = new Array(2,2.5,3,4);
 	
 	d.VSpacer(20).Newline();
 	var color = new Param(C_SchaefferHousings_UI_color);
-	d.Spacer(25).Text("Color of panels:").NewlineC();
-	d.Spacer(25).RadioBox(color, " \nNatural\nGold\nRed\nBlue\nGreen\nBlack").Spacer(25).NewlineC();
+	d.Spacer(25).Text(_("Color of panels:")).NewlineC();
+	d.Spacer(25).RadioBox(color, _(" \nNatural\nGold\nRed\nBlue\nGreen\nBlack")).Spacer(25).NewlineC();
 	var colorCodes = new Array(elox_natural,elox_gold,elox_red,elox_blue,elox_green,elox_black);
 
 	d.VSpacer(20).Newline();
 	var kitcolor = new Param(C_SchaefferHousings_UI_kitcolor);
-	d.Spacer(25).Text("Color of screws/profiles:").NewlineC();
-	d.Spacer(25).RadioBox(kitcolor, " \n(No kit)\nNatural\nBlack").Spacer(25).NewlineC();
+	d.Spacer(25).Text(_("Color of screws/profiles:")).NewlineC();
+	d.Spacer(25).RadioBox(kitcolor, _(" \n(No kit)\nNatural\nBlack")).Spacer(25).NewlineC();
 
 	d.VSpacer(20).Newline();
 
 	var housingBrackets = new Param(C_SchaefferHousings_UI_housingBrackets);
-	d.Spacer(25).CheckBox(housingBrackets, "Add housing brackets?").NewlineC();
+	d.Spacer(25).CheckBox(housingBrackets, _("Add housing brackets?")).NewlineC();
 
 	var guideObjects = new Param(C_SchaefferHousings_UI_guideObjects);
-	d.Spacer(25).CheckBox(guideObjects, "Add guide engravings?").NewlineC();
+	d.Spacer(25).CheckBox(guideObjects, _("Add guide engravings?")).NewlineC();
 
 	var dryRun = new Param(C_SchaefferHousings_UI_dryRun);
-	d.Spacer(25).CheckBox(dryRun, "Test run (Only Front panel rendered)").NewlineC();
+	d.Spacer(25).CheckBox(dryRun, _("Test run (Only Front panel rendered)")).NewlineC();
 
 	d.Divider().NewlineC();
 
 	// And an "Ok" button, which, when pressed, will close
 	// the dialog, returning 1 from Show().
-	d.Spacer(0).DlgButton(1, "Create!").Spacer(0);
+	d.Spacer(0).DlgButton(1, _("Create!")).Spacer(0);
 	// Show dialog, pressed button is returned but not used
 	// in this example.
 	var b = d.Show();
@@ -323,15 +323,15 @@ function showUI()	{
 	C_SchaefferHousings_UI_dryRun = dryRun.get();
 	
 	// Transferring values from UI to global variables:
-	Print("\n\nConfiguration values:\n")
+	Print(_("\n\nConfiguration values:\n"));
 	switch(C_type)	{
-		case 1:
-			C_sideSectionType = sideSectionHeight.get()+1;
-			Print("C_sideSectionType="+C_sideSectionType+"\n")
+	case 1:
+		C_sideSectionType = sideSectionHeight.get()+1;
+		Print("C_sideSectionType="+C_sideSectionType+"\n")
 		break;
-		case 2:
-			C_height = parseFloat(height.get());
-			Print("C_height="+C_height+"\n")
+	case 2:
+		C_height = parseFloat(height.get());
+		Print("C_height="+C_height+"\n")
 		break;		
 	}
 	C_width = parseFloat(width.get());
@@ -342,7 +342,7 @@ function showUI()	{
 		C_extraFrontWidth = 23;
 		C_rackEars = true;
 		Print("C_extraFrontWidth="+C_extraFrontWidth+"\n")
-		Print("C_rackEars="+(C_rackEars?"Yes":"No")+"\n")
+		Print("C_rackEars="+(C_rackEars?_("Yes"):_("No"))+"\n")
 		switch(C_type)	{
 			case 1:
 				C_extraFrontHeight = 0.8;
@@ -381,20 +381,20 @@ function showUI()	{
 	if (housingBrackets.get())	{
 		C_numberOfHousingBracketsFront = new Array(-1,-1,-1,-1);
 		C_numberOfHousingBracketsBack = new Array(-1,-1,-1,-1);
-		Print("Housing Brackets=Yes\n")
+		Print(_("Housing Brackets=Yes\n"));
 	}
 	
 	if (kitcolor.get())	{
 		C_createOrder = true;
 		C_orderBlackItems = kitcolor.get()==2 ? true : false;
-		Print("C_orderBlackItems="+(C_orderBlackItems?"Yes":"No")+"\n")
+		Print("C_orderBlackItems="+(C_orderBlackItems?_("Yes"):_("No"))+"\n")
 	}
 	
 	C_addGuideEngravings = guideObjects.get() ? true : false;
-	Print("C_addGuideEngravings="+(C_addGuideEngravings?"Yes":"No")+"\n")
+	Print("C_addGuideEngravings="+(C_addGuideEngravings?_("Yes"):_("No"))+"\n")
 	
 	C_dryRun = dryRun.get() ? true : false;
-	Print("C_dryRun="+(C_dryRun?"Yes":"No")+"\n")
+	Print("C_dryRun="+(C_dryRun?_("Yes"):_("No"))+"\n")
 	
 	C_useAssemblySlotsFront = new Array(false, false, false, false);
 	C_useAssemblySlotsBack = new Array(false, false, false, false);	
@@ -1523,7 +1523,7 @@ function createEnds(name, sideNum) {
 					);
 
 					fp.AddElement(
-						new TextEngraving("el", i==0?"Top":"Bottom").SetHelpElement(true).SetAlignment(align_center).SetTextHeight(1),
+						new TextEngraving("el", i==0?_("Top"):_("Bottom")).SetHelpElement(true).SetAlignment(align_center).SetTextHeight(1),
 						centerX, 
 						centerY+(getFrontSideOffset(sideIndex[i])-getThickness(sideIndex[i])/2)*(i&1?-1:1)+(i==1?lowerRightOffset/2:0)
 					);
@@ -1538,7 +1538,7 @@ function createEnds(name, sideNum) {
 					);
 					
 					fp.AddElement(
-						new TextEngraving("el", i==2?"Right":"Left").SetHelpElement(true).SetAlignment(align_center).SetTextHeight(1).SetAngle(90),
+						new TextEngraving("el", i==2?_("Right"):_("Left")).SetHelpElement(true).SetAlignment(align_center).SetTextHeight(1).SetAngle(90),
 						centerX+(getFrontSideOffset(sideIndex[i])-getThickness(sideIndex[i])/2)*(i&1?-1:1)*(sideNum==3?-1:1), 
 						centerY+(i==2?lowerRightOffset/2:0)
 					);
@@ -1622,7 +1622,7 @@ function createEnds(name, sideNum) {
 	
 		// Edge grinding
 	if (C_addEdgeGrinding)	{
-		fp.SetRemark("Please grind the edges.");
+		fp.SetRemark(_("Please grind the edges."));
 	}
 		
 	fp.UnsetModified().GridOff();	
@@ -1758,7 +1758,7 @@ function createSides(name, sideNum)	{
 			centerY-(centerY-assemblySlotDepth(sideNum, false)+getThickness(1)/2)
 		);
 		fp.AddElement(
-			new TextEngraving("el","Front").SetHelpElement(true).SetAlignment(align_center).SetTextHeight(1),
+			new TextEngraving("el",_("Front")).SetHelpElement(true).SetAlignment(align_center).SetTextHeight(1),
 			centerX,
 			centerY-(centerY-assemblySlotDepth(sideNum, false)+getThickness(1)/2)+5
 		);
@@ -1770,7 +1770,7 @@ function createSides(name, sideNum)	{
 			centerY+(centerY-assemblySlotDepth(sideNum, true)+getThickness(3)/2)
 		);
 		fp.AddElement(
-			new TextEngraving("el","Back").SetAlignment(align_center).SetHelpElement(true).SetTextHeight(1),
+			new TextEngraving("el",_("Back")).SetAlignment(align_center).SetHelpElement(true).SetTextHeight(1),
 			centerX,
 			centerY+(centerY-assemblySlotDepth(sideNum, true)+getThickness(3)/2)-5
 		);
@@ -1834,7 +1834,7 @@ function createOrder()	{
 	
 		// Edge Grinding:
 	if (C_addEdgeGrinding)	{
-		OrderSetRemark("Notice, there are edge grindings on some panels.");
+		OrderSetRemark(_("Notice, there are edge grindings on some panels."));
 	}
 	
 		// Housing brackets:
@@ -1892,31 +1892,31 @@ function rotatePanel(fp,rotation)	{
  **************************/
 
 // Front (1)
-var fp1 = createEnds("Front",1);
+var fp1 = createEnds(_("Front"),1);
 AddFrontpanel(fp1);
 
 if (!C_dryRun)	{
 	//rotatePanel(fp1,90);
 
 	// Top (2)
-	var fp2 = createSides("Top",2);
+	var fp2 = createSides(_("Top"),2);
 	AddFrontpanel(fp2);
 
 	// Back (3)
-	var fp3 = createEnds("Back",3);
+	var fp3 = createEnds(_("Back"),3);
 	AddFrontpanel(fp3);
 
 	// Bottom (4)
-	var fp4 = createSides("Bottom",4);
+	var fp4 = createSides(_("Bottom"),4);
 	AddFrontpanel(fp4);
 
 	if (C_type==2)	{
 		// Left (5)
-		var fp5 = createSides("Left",5);
+		var fp5 = createSides(_("Left"),5);
 		AddFrontpanel(fp5);
 
 		// Right (6)
-		var fp6 = createSides("Right",6);
+		var fp6 = createSides(_("Right"),6);
 		AddFrontpanel(fp6);
 	}
 
