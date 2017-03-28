@@ -211,43 +211,43 @@ if (C_UI) {
  **********************************************************************/
 
 function ShowError(message) {
-    var d = new Dialog("Error");
+    var d = new Dialog(_("Error"));
     d.VSpacer(10).NewlineC().Spacer(10);
     d.Text(message).Spacer(40).NewlineC().VSpacer(10);
-    d.Newline().Spacer(0).DlgButton(1, "Ok").Spacer(0);
+    d.Newline().Spacer(0).DlgButton(1, _("Ok").Spacer(0);
     var b = d.Show();
 }
 
 function showUI() {
-    var d = new Dialog("Raspberry Pi 2/3 U-box - a housing based on two panels with bends", 500, 100); // create the dialog window
+    var d = new Dialog(_("Raspberry Pi 2/3 U-box - a housing based on two panels with bends"), 500, 100); // create the dialog window
     d.Newline().VSpacer(0).NewlineC();
     var rpiModel = new Param(C_UHousings_UI_rpitype);
-    d.Spacer(10).Text("Raspberry Pi Model:").Spacer(0).NewlineC();
-    d.Spacer(25).RadioBox(rpiModel, " \nRaspberry Pi 2\nRaspberry Pi 3\nBoth").Spacer(25).NewlineC();
-    d.Spacer(10).VSpacer(10).Text("Physical dimensions:").NewlineC();
+    d.Spacer(10).Text(_("Raspberry Pi Model:")).Spacer(0).NewlineC();
+    d.Spacer(25).RadioBox(rpiModel, _(" \nRaspberry Pi 2\nRaspberry Pi 3\nBoth")).Spacer(25).NewlineC();
+    d.Spacer(10).VSpacer(10).Text(_("Physical dimensions:")).NewlineC();
     var height = new Param(C_UHousings_UI_height.toString());
-    d.Spacer(25).Text("Height: 38 +");
-    d.Spacer(10).TextEntry(1, height).Spacer(5).Text("mm").Spacer(0).NewlineC();
+    d.Spacer(25).Text(_("Height: 38 +"));
+    d.Spacer(10).TextEntry(1, height).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
     var width = new Param(C_UHousings_UI_width.toString());
-    d.Spacer(25).Text("Width: 65 + ");
-    d.Spacer(13).TextEntry(1, width).Spacer(5).Text("mm").Spacer(0).NewlineC();
+    d.Spacer(25).Text(_("Width: 65 + "));
+    d.Spacer(13).TextEntry(1, width).Spacer(5).Text(_("mm").Spacer(0).NewlineC();
     var depth = new Param(C_UHousings_UI_depth.toString());
-    d.Spacer(25).Text("Depth: 91 + ");
-    d.Spacer(10).TextEntry(1, depth).Spacer(5).Text("mm").Spacer(0).NewlineC();
+    d.Spacer(25).Text(_("Depth: 91 + "));
+    d.Spacer(10).TextEntry(1, depth).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
     d.VSpacer(15).Newline();
     var standoffHeight = new Param(C_UHousings_UI_standoffHeight.toString());
-    d.Spacer(25).Text("Standoff height: 12 + ");
-    d.Spacer(10).TextEntry(1, standoffHeight).Spacer(5).Text("mm").Spacer(0).NewlineC();
+    d.Spacer(25).Text(_("Standoff height: 12 + "));
+    d.Spacer(10).TextEntry(1, standoffHeight).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
     d.VSpacer(10).Newline();
 
     var standoffType = new Param(C_UHousings_UI_standoffType);
-    d.Spacer(10).Text("Standoff type:").NewlineC();
-    d.Spacer(25).RadioBox(standoffType, " \nUse own\n12mm\n16mm\n20mm").Spacer(25).NewlineC();
+    d.Spacer(10).Text(_("Standoff type:")).NewlineC();
+    d.Spacer(25).RadioBox(standoffType, _(" \nUse own\n12mm\n16mm\n20mm")).Spacer(25).NewlineC();
     d.VSpacer(20).Newline();
 
     var depthOffset = new Param(C_UHousings_UI_depthOffset.toString());
-    d.Spacer(25).Text("Raspberry Pi offset: ");
-    d.Spacer(10).TextEntry(1, depthOffset).Spacer(5).Text("mm").Spacer(0).NewlineC();
+    d.Spacer(25).Text(_("Raspberry Pi offset: "));
+    d.Spacer(10).TextEntry(1, depthOffset).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
 
     var cEthernet = new Param(C_UHousings_UI_cEthernet);
     var cUSB1 = new Param(C_UHousings_UI_cUSB1);
@@ -256,38 +256,38 @@ function showUI() {
     var cSD = new Param(C_UHousings_UI_cSD);
     var cMicroUSB = new Param(C_UHousings_UI_cMicroUSB);
     var cHDMI = new Param(C_UHousings_UI_cHDMI);
-    d.Spacer(10).Text("Add cutouts:").NewlineC();
-    d.Spacer(15).CheckBox(cEthernet, "Ethernet").NewlineC();
-    d.Spacer(15).CheckBox(cUSB1, "USB 1").NewlineC();
-    d.Spacer(15).CheckBox(cUSB2, "USB 2").NewlineC();
-    d.Spacer(15).CheckBox(cMinijack, "3.5 mm Audio").NewlineC();
-    d.Spacer(15).CheckBox(cMicroUSB, "Micro USB").NewlineC();
-    d.Spacer(15).CheckBox(cHDMI, "HDMI").NewlineC();
-    d.Spacer(15).CheckBox(cSD, "SD Card").NewlineC();
+    d.Spacer(10).Text(_("Add cutouts:")).NewlineC();
+    d.Spacer(15).CheckBox(cEthernet, _("Ethernet")).NewlineC();
+    d.Spacer(15).CheckBox(cUSB1, _("USB 1")).NewlineC();
+    d.Spacer(15).CheckBox(cUSB2, _("USB 2")).NewlineC();
+    d.Spacer(15).CheckBox(cMinijack, _("3.5 mm Audio")).NewlineC();
+    d.Spacer(15).CheckBox(cMicroUSB, _("Micro USB")).NewlineC();
+    d.Spacer(15).CheckBox(cHDMI, _("HDMI")).NewlineC();
+    d.Spacer(15).CheckBox(cSD, _("SD Card")).NewlineC();
 
 
     var colorCodes = new Array(elox_natural, elox_gold, elox_red, elox_blue, elox_green, elox_black);
 
     var topcolor = new Param(C_UHousings_UI_topColor);
-    d.Spacer(10).Text("Color of top panel:").NewlineC();
-    d.Spacer(25).RadioBox(topcolor, " \nNatural\nGold\nRed\nBlue\nGreen\nBlack").Spacer(25).NewlineC();
+    d.Spacer(10).Text(_("Color of top panel:")).NewlineC();
+    d.Spacer(25).RadioBox(topcolor, _(" \nNatural\nGold\nRed\nBlue\nGreen\nBlack")).Spacer(25).NewlineC();
     d.VSpacer(20).Newline();
 
     var bottomcolor = new Param(C_UHousings_UI_bottomColor);
-    d.Spacer(10).Text("Color of bottom panel:").NewlineC();
-    d.Spacer(25).RadioBox(bottomcolor, " \nNatural\nGold\nRed\nBlue\nGreen\nBlack").Spacer(25).NewlineC();
+    d.Spacer(10).Text(_("Color of bottom panel:")).NewlineC();
+    d.Spacer(25).RadioBox(bottomcolor, _(" \nNatural\nGold\nRed\nBlue\nGreen\nBlack")).Spacer(25).NewlineC();
 
     d.VSpacer(20).Newline();
 
     var guideObjects = new Param(C_UHousings_UI_guideObjects);
-    d.Spacer(25).CheckBox(guideObjects, "Add guide engravings?").NewlineC();
+    d.Spacer(25).CheckBox(guideObjects, _("Add guide engravings?")).NewlineC();
     var createOrder = new Param(C_UHousings_UI_createOrder);
-    d.Spacer(25).CheckBox(createOrder, "Create order with housing brackets?").NewlineC();
+    d.Spacer(25).CheckBox(createOrder, _("Create order with housing brackets?")).NewlineC();
     d.Divider().NewlineC();
     // And an "Ok" button, which, when pressed, will close
     // the dialog, returning 1 from Show().
-    d.Spacer(0).DlgButton(1, "Create");
-    d.Spacer(5).DlgButton(2, "Cancel");
+    d.Spacer(0).DlgButton(1, _("Create"));
+    d.Spacer(5).DlgButton(2, _("Cancel"));
 
     // Show dialog, pressed button is returned but not used
     // in this example.
@@ -322,12 +322,12 @@ function showUI() {
     error = 0;
 
     // Transferring values from UI to global variables:
-    Print("\n\nConfiguration values:\n")
+    Print(_("\n\nConfiguration values:\n"))
 
     C_height = 38 + parseFloat(height.get())
         // Ensure that these minimum values are not exceeded
     if (parseFloat(height.get()) < 0) {
-        ShowError("Height must be positive!");
+        ShowError(_("Height must be positive!"));
         error++;
     } else {
         //C_height = 38 + parseFloat(height.get())
@@ -335,7 +335,7 @@ function showUI() {
 
     C_width = 65 + parseFloat(width.get());
     if (parseFloat(width.get()) < 0) {
-        ShowError("Width must be positive!");
+        ShowError(_("Width must be positive!"));
         error++;
     } else {
         //C_width = 65 + parseFloat(width.get());
@@ -345,20 +345,20 @@ function showUI() {
 
     C_depth = 91 + parseFloat(depth.get());
     if (parseFloat(depth.get()) < 0) {
-        ShowError("Depth must be positive!");
+        ShowError(_("Depth must be positive!"));
         error++;
     } else {
         //C_depth = 91 + parseFloat(depth.get());
     }
 
     if (parseFloat(depth.get()) > 0 && !canExpandDepth) {
-        ShowError("The depth can only be expanded when either the SD slot or both Ethernet, USB1 and USB2 or all of these are de-selected!");
+        ShowError(_("The depth can only be expanded when either the SD slot or both Ethernet, USB1 and USB2 or all of these are de-selected!"));
         error++;
     }
 
     C_standoffHeight = 12 + parseFloat(standoffHeight.get());
     if (parseFloat(standoffHeight.get()) < 0) {
-        ShowError("The standoff height must be positive!");
+        ShowError(_("The standoff height must be positive!"));
         error++;
     } else {
         //C_standoffHeight = 12 + parseFloat(standoffHeight.get());
@@ -366,7 +366,7 @@ function showUI() {
 
     if(standoffType.get() > 0) {
     	if(C_standoffHeight > 12) {
-    		ShowError("When glued standoffs are chosen, the standoff height cannot be adjusted separately!");
+    		ShowError(_("When glued standoffs are chosen, the standoff height cannot be adjusted separately!"));
     		error++;
     	}
 
@@ -386,32 +386,32 @@ function showUI() {
 
 
     if (C_height - C_standoffHeight < 26) {
-        ShowError("The height must be at least 26 mm higher than the total standoff height!");
+        ShowError(_("The height must be at least 26 mm higher than the total standoff height!"));
         error++;
     } else {
-        //Print("Increased height from " + C_height + "mm to " + (C_standoffHeight + 26) + "mm!");
+        //Print(_("Increased height from " + C_height + _("mm to " + (C_standoffHeight + 26) + _("mm!");
         //C_height = C_standoffHeight + 26;
     }
 
     C_depthOffset = parseFloat(depthOffset.get());
 
     if (C_depthOffset < 0) {
-        ShowError("The Raspberry Pi offset must be positive!");
+        ShowError(_("The Raspberry Pi offset must be positive!"));
         error++;
     } else {
         if (C_UHousings_UI_cSD === 0 && C_UHousings_UI_cUSB1 === 0 && C_UHousings_UI_cUSB2 === 0 && C_UHousings_UI_cEthernet === 0) {
             if (C_depth - 91 < C_depthOffset) {
-                ShowError("The depth offset must not be larger than depth - 91mm!");
+                ShowError(_("The depth offset must not be larger than depth - 91mm!"));
                 error++;
             }
         } else if (C_depthOffset > 0) {
-            ShowError("A non-zero depth offset can only be set if Ethernet, USB1, USB2 and SD card is disabled.");
+            ShowError(_("A non-zero depth offset can only be set if Ethernet, USB1, USB2 and SD card is disabled."));
             error++;
         }
     }
 
     if (isNaN(C_height) || isNaN(C_width) || isNaN(C_depth) || isNaN(C_standoffHeight) || isNaN(C_depthOffset)) {
-        ShowError("Please only enter numeric values!");
+        ShowError(_("Please only enter numeric values!"));
         error++;
     }
 
@@ -425,10 +425,10 @@ function showUI() {
         Print("C_color=[" + C_color + "]\n")
 
         C_addGuideEngravings = guideObjects.get() ? true : false;
-        Print("C_addGuideEngravings=" + (C_addGuideEngravings ? "Yes" : "No") + "\n")
+        Print("C_addGuideEngravings=" + (C_addGuideEngravings ? _("Yes") : _("No")) + "\n")
 
         C_createOrder = createOrder.get() ? true : false;
-        Print("C_createOrder=" + (C_createOrder ? "Yes" : "No") + "\n")
+        Print("C_createOrder=" + (C_createOrder ? _("Yes") : _("No")) + "\n")
         return true;
     }
 }
@@ -988,7 +988,7 @@ function createTop(name) {
             center[1] - (C_thickness[0] - C_thickness[th]) / 2
         );
         fp.AddElement(
-            new TextEngraving("el", "Front mounting area").SetAlignment(align_center).SetTextHeight(1.5).SetHelpElement(true),
+            new TextEngraving("el", _("Front mounting area")).SetAlignment(align_center).SetTextHeight(1.5).SetHelpElement(true),
             center[0],
             center[1]
         );
@@ -1006,7 +1006,7 @@ function createTop(name) {
             center[1]
         );
         fp.AddElement(
-            new TextEngraving("el", "Top mounting area").SetAlignment(align_center).SetTextHeight(1.5).SetHelpElement(true),
+            new TextEngraving("el", _("Top mounting area")).SetAlignment(align_center).SetTextHeight(1.5).SetHelpElement(true),
             center[0],
             center[1]
         );
@@ -1036,14 +1036,14 @@ function createTop(name) {
             center[1] + (C_thickness[0] - C_thickness[th]) / 2
         );
         fp.AddElement(
-            new TextEngraving("el", "Back mounting area").SetAlignment(align_center).SetAngle(180).SetTextHeight(1.5).SetHelpElement(true),
+            new TextEngraving("el", _("Back mounting area")).SetAlignment(align_center).SetAngle(180).SetTextHeight(1.5).SetHelpElement(true),
             center[0],
             center[1]
         );
     }
     // Edge grinding
     if (C_addEdgeGrinding) {
-        fp.SetRemark("Please grind the edges.");
+        fp.SetRemark(_("Please grind the edges."));
     }
     // If front wings, then we must offset all elements 7mm up! (because DXF contour was made with y=-7 as the extreme value...)
     if (C_bottomWings[0] > 0) {
@@ -1284,7 +1284,7 @@ function createBottom(name) {
             center[1] - (C_thickness[0] - C_thickness[1]) / 2
         );
         fp.AddElement(
-            new TextEngraving("el", "Left mounting area").SetAlignment(align_center).SetTextHeight(1.5).SetHelpElement(true),
+            new TextEngraving("el", _("Left mounting area")).SetAlignment(align_center).SetTextHeight(1.5).SetHelpElement(true),
             center[0],
             center[1]
         );
@@ -1302,7 +1302,7 @@ function createBottom(name) {
             center[1]
         );
         fp.AddElement(
-            new TextEngraving("el", "Bottom mounting area").SetAlignment(align_center).SetAngle(-90).SetTextHeight(1.5).SetHelpElement(true),
+            new TextEngraving("el", _("Bottom mounting area")).SetAlignment(align_center).SetAngle(-90).SetTextHeight(1.5).SetHelpElement(true),
             center[0],
             center[1]
         );
@@ -1331,28 +1331,28 @@ function createBottom(name) {
             center[1] + (C_thickness[0] - C_thickness[1]) / 2
         );
         fp.AddElement(
-            new TextEngraving("el", "Right mounting area").SetAlignment(align_center).SetAngle(180).SetTextHeight(1.5).SetHelpElement(true),
+            new TextEngraving("el", _("Right mounting area")).SetAlignment(align_center).SetAngle(180).SetTextHeight(1.5).SetHelpElement(true),
             center[0],
             center[1]
         );
         // Labeling sides:
         fp.AddElement(
-            new TextEngraving("el", "Back").SetAlignment(align_center).SetAngle(90).SetTextHeight(1.5).SetHelpElement(true), -C_thickness[0] / 2,
+            new TextEngraving("el", _("Back")).SetAlignment(align_center).SetAngle(90).SetTextHeight(1.5).SetHelpElement(true), -C_thickness[0] / 2,
             getPanelHeight(2) / 2
         );
         // Labeling sides:
         fp.AddElement(
-            new TextEngraving("el", "Front").SetAlignment(align_center).SetAngle(-90).SetTextHeight(1.5).SetHelpElement(true),
+            new TextEngraving("el", _("Front")).SetAlignment(align_center).SetAngle(-90).SetTextHeight(1.5).SetHelpElement(true),
             getPanelWidth(2) + C_thickness[0] / 2,
             getPanelHeight(2) / 2
         );
         fp.AddElement(
-            new TextEngraving("el", "Top").SetAlignment(align_center).SetAngle(180).SetTextHeight(1.5).SetHelpElement(true),
+            new TextEngraving("el", _("Top")).SetAlignment(align_center).SetAngle(180).SetTextHeight(1.5).SetHelpElement(true),
             getPanelWidth(2) / 2, -C_thickness[0] / 2
         );
         // Labeling sides:
         fp.AddElement(
-            new TextEngraving("el", "Top").SetAlignment(align_center).SetAngle(0).SetTextHeight(1.5).SetHelpElement(true),
+            new TextEngraving("el", _("Top")).SetAlignment(align_center).SetAngle(0).SetTextHeight(1.5).SetHelpElement(true),
             getPanelWidth(2) / 2,
             getPanelHeight(2) + C_thickness[0] / 2
         );
@@ -1431,7 +1431,7 @@ function createBottom(name) {
 
     // Edge grinding
     if (C_addEdgeGrinding) {
-        fp.SetRemark("Please grind the edges.");
+        fp.SetRemark(_("Please grind the edges."));
     }
     fp.UnsetModified().GridOff();
     return fp;
@@ -1442,7 +1442,7 @@ function createBottom(name) {
 function createOrder() {
     // Edge Grinding:
     if (C_addEdgeGrinding) {
-        OrderSetRemark("Notice, there are edge grindings on some panels.");
+        OrderSetRemark(_("Notice, there are edge grindings on some panels."));
     }
     // Housing brackets:
     if (globalHousingBracketCount > 0) {
@@ -1488,10 +1488,10 @@ function rotatePanel(fp, rotation) {
  * Execute...
  **************************/
 // Front-Top-Back (1)
-var fp1 = createTop("Top");
+var fp1 = createTop(_("Top"));
 AddFrontpanel(fp1);
 // Right-Back-Left (2)
-var fp2 = createBottom("Bottom");
+var fp2 = createBottom(_("Bottom"));
 AddFrontpanel(fp2);
 //rotatePanel(fp2,90); // Rotates 90 CCW
 // Create order with accessories:
