@@ -233,8 +233,11 @@ function showUI()	{
 	// Show dialog, pressed button is returned but not used
 	// in this example.
 	var b = d.Show();
-
 	
+	if(b==0) {
+		Print(_("Script execution cancelled due to user request"));
+		Halt();
+	}
 	
 	
 	C_type = enclosureType.get()+1; 
@@ -308,8 +311,10 @@ function showUI()	{
 	// in this example.
 	var b = d.Show();
 	
-	
-	
+	if(b==0) {
+		Print(_("Script execution cancelled due to user request"));
+		Halt();
+	}
 	
 	C_SchaefferHousings_UI_color = color.get();
 	if (typeof sideSectionHeight !== 'undefined') {
