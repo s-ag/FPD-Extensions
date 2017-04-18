@@ -214,7 +214,7 @@ function ShowError(message) {
     var d = new Dialog(_("Error"));
     d.VSpacer(10).NewlineC().Spacer(10);
     d.Text(message).Spacer(40).NewlineC().VSpacer(10);
-    d.Newline().Spacer(0).DlgButton(1, _("Ok").Spacer(0);
+    d.Newline().Spacer(0).DlgButton(1, _("Ok")).Spacer(0);
     var b = d.Show();
 }
 
@@ -230,7 +230,7 @@ function showUI() {
     d.Spacer(10).TextEntry(1, height).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
     var width = new Param(C_UHousings_UI_width.toString());
     d.Spacer(25).Text(_("Width: 65 + "));
-    d.Spacer(13).TextEntry(1, width).Spacer(5).Text(_("mm").Spacer(0).NewlineC();
+    d.Spacer(13).TextEntry(1, width).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
     var depth = new Param(C_UHousings_UI_depth.toString());
     d.Spacer(25).Text(_("Depth: 91 + "));
     d.Spacer(10).TextEntry(1, depth).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
