@@ -277,8 +277,8 @@ function showUI()	{
 
 	var thickness = new Param(C_SchaefferHousings_UI_thickness);
 	d.Spacer(25).Text(_("Thickness of panels:")).NewlineC();
-	d.Spacer(25).RadioBox(thickness, _(" \n2 mm\n2.5 mm\n3 mm\n4 mm")).Spacer(0).NewlineC();
-	var thicknessCodes = new Array(2,2.5,3,4);
+	d.Spacer(25).RadioBox(thickness, _(" \n2.5 mm\n3 mm\n4 mm")).Spacer(0).NewlineC();
+	var thicknessCodes = new Array(2.5,3,4);
 	
 	d.VSpacer(20).Newline();
 	var color = new Param(C_SchaefferHousings_UI_color);
