@@ -283,8 +283,8 @@ function showUI()	{
 	d.VSpacer(20).Newline();
 	var color = new Param(C_SchaefferHousings_UI_color);
 	d.Spacer(25).Text(_("Color of panels:")).NewlineC();
-	d.Spacer(25).RadioBox(color, _(" \nNatural\nGold\nRed\nBlue\nGreen\nBlack")).Spacer(25).NewlineC();
-	var colorCodes = new Array(elox_natural,elox_gold,elox_red,elox_blue,elox_green,elox_black);
+	d.Spacer(25).RadioBox(color, _(" \nNatural\nGold\nRed\nBlue\nGreen\nMedium bronze\nBlack")).Spacer(25).NewlineC();
+	var colorCodes = new Array(elox_natural,elox_gold,elox_red,elox_blue,elox_green,elox_medium_bronze,elox_black);
 
 	d.VSpacer(20).Newline();
 	var kitcolor = new Param(C_SchaefferHousings_UI_kitcolor);

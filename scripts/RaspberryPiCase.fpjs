@@ -266,16 +266,16 @@ function showUI() {
     d.Spacer(15).CheckBox(cSD, _("SD Card")).NewlineC();
 
 
-    var colorCodes = new Array(elox_natural, elox_gold, elox_red, elox_blue, elox_green, elox_black);
+    var colorCodes = new Array(elox_natural, elox_gold, elox_red, elox_blue, elox_green, elox_medium_bronze, elox_black);
 
     var topcolor = new Param(C_UHousings_UI_topColor);
     d.Spacer(10).Text(_("Color of top panel:")).NewlineC();
-    d.Spacer(25).RadioBox(topcolor, _(" \nNatural\nGold\nRed\nBlue\nGreen\nBlack")).Spacer(25).NewlineC();
+    d.Spacer(25).RadioBox(topcolor, _(" \nNatural\nGold\nRed\nBlue\nGreen\nMedium bronze\nBlack")).Spacer(25).NewlineC();
     d.VSpacer(20).Newline();
 
     var bottomcolor = new Param(C_UHousings_UI_bottomColor);
     d.Spacer(10).Text(_("Color of bottom panel:")).NewlineC();
-    d.Spacer(25).RadioBox(bottomcolor, _(" \nNatural\nGold\nRed\nBlue\nGreen\nBlack")).Spacer(25).NewlineC();
+    d.Spacer(25).RadioBox(bottomcolor, _(" \nNatural\nGold\nRed\nBlue\nGreen\nMedium bronze\nBlack")).Spacer(25).NewlineC();
 
     d.VSpacer(20).Newline();
 
