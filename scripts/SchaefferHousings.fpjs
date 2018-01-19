@@ -50,7 +50,7 @@ var C_sideSectionType = 1;
 // For C_type==2: Determines if housing profile 2 is used on a given side.
 // Notice: If set true for a given side, any adjacent sides CANNOT be true as well!
 // For instance, it can be true for Top and Bottom or Left and Right, but not Top and Left
-var C_housingProfile2Top = true;
+var C_housingProfile2Top = false;
 var C_housingProfile2Left = false;
 var C_housingProfile2Right = false;
 var C_housingProfile2Bottom = false;
@@ -85,7 +85,7 @@ var C_color = new Array(
 var C_numberOfHousingBracketsFront = new Array(0,0,0,0); // (Top, Bottom, Left, Right). Defines the number of housing brackets used on the front for each side panel. -1 will automatically place them pr. C_housingBracketMaxDistance mm.
 var C_numberOfHousingBracketsBack = new Array(0,0,0,0);  // (Top, Bottom, Left, Right). Defines the number of housing brackets used on the back for each side panel.  -1 will automatically place them pr. C_housingBracketMaxDistance mm.
 var C_housingBracketMaxDistance = 150;	// The maximum distance between automatically placed housing brackets
-var C_useStudsForHousingBracketsOnFront = true;	// Uses M3x8mm Studs for housing brackets on front (instead of countersunk holes). Notice: This requires you to drill the thread out of the housing brackets on one side and use a washer and nut to fasten it!
+var C_useStudsForHousingBracketsOnFront = false;	// Uses M3x8mm Studs for housing brackets on front (instead of countersunk holes). Notice: This requires you to drill the thread out of the housing brackets on one side and use a washer and nut to fasten it!
 var C_useStudsForHousingBracketsOnBack = false;	// Same as above, but for the back.
 
 // Front and Back Assembly Slots:
@@ -99,13 +99,14 @@ var C_assemblySlotDepthBack = new Array(1,1,1,1);				// (Top, Bottom, Left, Righ
 // Ordering
 var C_createOrder = false;			// If true, will create an order and add the accessories (profiles, assembly kits etc.)
 var C_orderBlackItems = false;		// If true, will order accessories in black instead of natural color.
+var M3count = 0;
 
 // Additional features:
 var C_extraFrontWidth = 0;	// If greater than zero, it will add this amount of space on left and right side of the front panel. This is useful to create "rack ears" (see also "C_rackEars" setting). If you want to create a true 19" unit, make sure 2* this value + C_width equals 483mm. A good choice is to set this value at 23mm and C_width = 437 => 23*2+437=483mm
 var C_extraFrontHeight = 0;	// If creating a 1U rack unit, 43.60mm is a typical choice for the total height, so add 1.6 in total by setting this value to 0.8. (1U = 44.45mm or 1.75inch)
 var C_rackEars = false;			// If true, adds holes for rack mounting. See also "C_extraFrontWidth"
 var C_roundFrontCorners = true;	// If true, corners of the front panel are rounded by 2mm which fits the side or housing profiles.
-var C_addEdgeGrinding = true;	// You probably want edges grinded on the end profiles (front and back) if you are not making a rack unit! Otherwise they are ugly from tool marks and often very sharp.
+var C_addEdgeGrinding = false;	// You probably want edges grinded on the end profiles (front and back) if you are not making a rack unit! Otherwise they are ugly from tool marks and often very sharp.
 var C_addGuideEngravings = true;	// This will add thin, orange engraved lines for preview of where adjacent components (panels, profiles and brackets) are located on each side. Can be useful for positioning other elements after which they should be removed before ordering.
 
 var C_panelNamesPrefix = "";		// A panel name prefix
@@ -113,7 +114,7 @@ var C_panelNamesSuffix = "";		// A panel name suffix
 
 // Exotic features:
 var C_sideExpansionOffset = new Array(0,0,0,0); // (Top, Bottom, Left, Right). This offsets the top, bottom, left and right plates outwards if positive. By default the top and bottom plates are placed so their outer surface is flush with the side/housing profiles. When used with housing profile 1 this value should probably be -1!
-var C_housingProfileRightHeight = 0;	// Must be less than C_height. If zero = off. Imposes various restrictions on the bottom plate, among other that it has to be bent a bit. So this is a special case. Also, cannot be used with housing brackets on the bottom plate (front and back). 
+var C_housingProfileRightHeight = 0;	// Must be less than C_height. If zero = off. Imposes various restrictions on the bottom plate, among other that it has to be bent a bit. So this is a special case. Also, cannot be used with housing brackets on the bottom plate (front and back).
 
 var C_dryRun = false;		// If set, the script will render only the "Front" panel
 
@@ -167,7 +168,7 @@ if (C_UI)	{
 		var C_SchaefferHousings_UI_rack = 0;
 	}
 	if (typeof C_SchaefferHousings_UI_thickness === 'undefined') {
-		var C_SchaefferHousings_UI_thickness = 0;
+		var C_SchaefferHousings_UI_thickness = 1;
 	}
 	if (typeof C_SchaefferHousings_UI_kitcolor === 'undefined') {
 		var C_SchaefferHousings_UI_kitcolor = 0;
@@ -180,6 +181,9 @@ if (C_UI)	{
 	}
 	if (typeof C_SchaefferHousings_UI_dryRun === 'undefined') {
 		var C_SchaefferHousings_UI_dryRun = 0;
+	}
+        if (typeof C_SchaefferHousings_UI_HProfile === 'undefined') {
+		var C_SchaefferHousings_UI_HProfile = 3;
 	}
 	
 	
@@ -224,9 +228,9 @@ function showUI()	{
 	d.Spacer(25).Text(_("Choose type of enclosure:")).NewlineC();
 	d.Spacer(25).RadioBox(enclosureType, _(" \nHousing with side profiles\nHousing with enclosure profiles")).Spacer(25).Newline();
 	d.VSpacer(0).NewlineC();
-	
+
 	d.Divider().NewlineC();
-	
+
 	// And an "Ok" button, which, when pressed, will close
 	// the dialog, returning 1 from Show().
 	d.Spacer(0).DlgButton(1, _("Ok!")).Spacer(0);
@@ -238,20 +242,20 @@ function showUI()	{
 		Print(_("Script execution cancelled due to user request"));
 		Halt();
 	}
-	
+	                                 
 	
 	C_type = enclosureType.get()+1; 
 	
 	if (enclosureType.get()+1==1)	{
 		var d = new Dialog(_("Housing with side profiles"),500,100); // create the dialog window
 		d.Newline().VSpacer(0).NewlineC();
-	
+
 		var sideSectionHeight = new Param(C_SchaefferHousings_UI_sideSectionHeight);
 		d.Spacer(25).Text(_("Height:"));
 		d.Spacer(6).RadioBox(sideSectionHeight, _(" \nSide Section 1 (42 mm)\nSide Section 2 (56mm)")).Spacer(0).NewlineC();
 	} else if (enclosureType.get()+1==2)	{
 		var d = new Dialog(_("Housing with enclosure profiles"),500,100); // create the dialog window
-		d.Newline().VSpacer(0).NewlineC();
+		d.Newline().VSpacer(10).NewlineC();
 	
 		var height = new Param(C_SchaefferHousings_UI_height.toString());
 		d.Spacer(25).Text(_("Height:"));
@@ -264,9 +268,9 @@ function showUI()	{
 
 	var rack = new Param(C_SchaefferHousings_UI_rack);
 	if (enclosureType.get()+1==1)	{
-		d.Spacer(25).Spacer(25).Spacer(25).CheckBox(rack, _("Make it a Rack Unit? (overrides Width)")).Spacer(5).NewlineC();
+		d.Spacer(25).CheckBox(rack, _("Make it a Rack Unit? (overrides Width)")).Spacer(5).NewlineC();
 	} else if (enclosureType.get()+1==2)	{
-		d.Spacer(25).Spacer(25).Spacer(25).Text(_("Rack Unit:")).Spacer(5).RadioBox(rack,_(" \nNone\n1U Rack Unit\n2U Rack Unit\n3U Rack Unit")).Spacer(5).Text(_("(Overrides width/height)")).Spacer(0).NewlineC();
+		d.Spacer(25).Text(_("Rack Unit:")).Spacer(5).RadioBox(rack,_(" \nNone\n1U Rack Unit\n2U Rack Unit\n3U Rack Unit")).Spacer(5).Text(_("(Overrides width/height)")).Spacer(0).NewlineC();
 	}
 
         var depth = new Param(C_SchaefferHousings_UI_depth.toString());
@@ -274,12 +278,18 @@ function showUI()	{
 	d.Spacer(10).TextEntry(1, depth).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
 
 	d.VSpacer(10).Newline();
-
+        var HProfileCodes = new Array (1,2,3);
+        var HProfile = new Param(C_SchaefferHousings_UI_HProfile-1);
+        if (enclosureType.get()+1==2)	{
+            d.Spacer(25).Text(_("Housing Profile:")).NewlineC();
+            d.Spacer(25).RadioBox(HProfile, _(" Type \n1 (slides'n'slots only) \n2 (sides with screws)\n3 (top with screws)")).Spacer(0).NewlineC();
+            d.VSpacer(10).Newline();
+        }
 	var thickness = new Param(C_SchaefferHousings_UI_thickness);
 	d.Spacer(25).Text(_("Thickness of panels:")).NewlineC();
-	d.Spacer(25).RadioBox(thickness, _(" \n2.5 mm\n3 mm\n4 mm")).Spacer(0).NewlineC();
-	var thicknessCodes = new Array(2.5,3,4);
-	
+	d.Spacer(25).RadioBox(thickness, _(" \n 2 mm \n2.5 mm\n3 mm\n4 mm")).Spacer(0).NewlineC();
+	var thicknessCodes = new Array(2,2.5,3,4);
+
 	d.VSpacer(20).Newline();
 	var color = new Param(C_SchaefferHousings_UI_color);
 	d.Spacer(25).Text(_("Color of panels:")).NewlineC();
@@ -298,6 +308,12 @@ function showUI()	{
 
 	var guideObjects = new Param(C_SchaefferHousings_UI_guideObjects);
 	d.Spacer(25).CheckBox(guideObjects, _("Add guide engravings?")).NewlineC();
+
+    var useStuds = C_useStudsForHousingBracketsOnFront ? 1 : 0;
+        //? (C_useStudsForHousingBracketsOnFront) ius = 0 : ius = 0;
+        //var
+    useStuds = new Param(useStuds);
+    d.Spacer(25).CheckBox(useStuds, _("Avoid FrontPanel Drillholes (use Studs)")).NewlineC();
 
 	var dryRun = new Param(C_SchaefferHousings_UI_dryRun);
 	d.Spacer(25).CheckBox(dryRun, _("Test run (Only Front panel rendered)")).NewlineC();
@@ -326,6 +342,27 @@ function showUI()	{
 	C_SchaefferHousings_UI_housingBrackets = housingBrackets.get();
 	C_SchaefferHousings_UI_guideObjects = guideObjects.get();
 	C_SchaefferHousings_UI_dryRun = dryRun.get();
+        C_SchaefferHousings_UI_HProfile = HProfileCodes[HProfile.get()];
+
+        //((C_SchaefferHousings_UI_HProfile=1;
+        if (C_SchaefferHousings_UI_HProfile == 1) {
+            C_housingProfile2Top = false;
+            C_housingProfile2Left = false;
+            C_housingProfile2Right = false;
+            C_housingProfile2Bottom = false;
+        } else if (C_SchaefferHousings_UI_HProfile == 2) {
+            C_housingProfile2Top = false;
+            C_housingProfile2Left = true;
+            C_housingProfile2Right = true;
+            C_housingProfile2Bottom = false;
+
+        } else {
+            C_housingProfile2Top = true;
+            C_housingProfile2Left = false;
+            C_housingProfile2Right = false;
+            C_housingProfile2Bottom = false;
+        }
+
 	
 	// Transferring values from UI to global variables:
 	Print(_("\n\nConfiguration values:\n"));
@@ -394,10 +431,12 @@ function showUI()	{
 		C_orderBlackItems = kitcolor.get()==2 ? true : false;
 		Print("C_orderBlackItems="+(C_orderBlackItems?_("Yes"):_("No"))+"\n")
 	}
+
+    C_useStudsForHousingBracketsOnFront = useStuds.get() ? true : false;
 	
 	C_addGuideEngravings = guideObjects.get() ? true : false;
 	Print("C_addGuideEngravings="+(C_addGuideEngravings?_("Yes"):_("No"))+"\n")
-	
+
 	C_dryRun = dryRun.get() ? true : false;
 	Print("C_dryRun="+(C_dryRun?_("Yes"):_("No"))+"\n")
 	
@@ -489,7 +528,7 @@ function preset_rackUnitBox(U_height, depth, color) {
 		);
 	
 	C_housingProfile2Top = true;
-	
+
 	C_numberOfHousingBracketsFront = new Array(3,3,0,0);
 	C_numberOfHousingBracketsBack = new Array(3,3,0,0);
 	C_useAssemblySlotsFront = new Array(true, true, false, false);	// (Top, Bottom, Left, Right).
@@ -572,7 +611,7 @@ function preset_test() {
 			elox_blue		// Right (For C_type==2 only)
 		);
 
-	// Housing Brackets:   	
+	// Housing Brackets:
 	C_numberOfHousingBracketsFront = new Array(1,2,0,0); // (Top, Bottom, Left, Right). Defines the number of housing brackets used on the front for each side panel. -1 will automatically place them pr. C_housingBracketMaxDistance mm.
 	C_numberOfHousingBracketsBack = new Array(0,0,1,1);  // (Top, Bottom, Left, Right). Defines the number of housing brackets used on the back for each side panel.  -1 will automatically place them pr. C_housingBracketMaxDistance mm.
 	C_useStudsForHousingBracketsOnFront = true;	// Uses M3x8mm Studs for housing brackets on front (instead of countersunk holes). Notice: This requires you to drill the thread out of the housing brackets on one side and use a washer and nut to fasten it!
@@ -581,8 +620,8 @@ function preset_test() {
 	// Front and Back Assembly Slots:
 	C_useAssemblySlotsFront = new Array(true, false, false, false);	// (Top, Bottom, Left, Right). If true, cavities are used on the front panel to fit the top, bottom, left and right plates.
 	C_useAssemblySlotsBack = new Array(false, false, false, false);	// (Top, Bottom, Left, Right). If true, cavities are used on the back panel to fit the top, bottom, left and right plates.
-	C_depthOfCavitiesForSlotsFront = new Array(1,1,1,1);	// (Top, Bottom, Left, Right). 
-	C_depthOfCavitiesForSlotsBack = new Array(1,1,1,1);	// (Top, Bottom, Left, Right). 
+	C_depthOfCavitiesForSlotsFront = new Array(1,1,1,1);	// (Top, Bottom, Left, Right).
+	C_depthOfCavitiesForSlotsBack = new Array(1,1,1,1);	// (Top, Bottom, Left, Right).
 	C_assemblySlotDepthFront = new Array(1.5,1.5,1.5,1.5);	// (Top, Bottom, Left, Right). Assembly Slot Depths, front side
 	C_assemblySlotDepthBack = new Array(1,1,1,1);				// (Top, Bottom, Left, Right). Assembly Slot Depths, back side
 
@@ -603,7 +642,7 @@ function preset_test() {
 
 	// Exotic features:
 	C_sideExpansionOffset = new Array(0,0,0,0); // (Top, Bottom, Left, Right). This offsets the top, bottom, left and right plates outwards if positive. By default the top and bottom plates are placed so their outer surface is flush with the side/housing profiles. When used with housing profile 1 this value should probably be -1!
-	C_housingProfileRightHeight = 0;	// Must be less than C_height. If zero = off. Imposes various restrictions on the bottom plate, among other that it has to be bent a bit. Also, cannot be used with housing brackets on the bottom plate (front and back). 
+	C_housingProfileRightHeight = 0;	// Must be less than C_height. If zero = off. Imposes various restrictions on the bottom plate, among other that it has to be bent a bit. Also, cannot be used with housing brackets on the bottom plate (front and back).
 }
 
 
@@ -640,6 +679,7 @@ function assemblySlotDepthTol(sideNum,onBackSide)	{	// SideNum = {2,4,5,6}
 function assemblySlotWidth(sideNum,onBackSide)	{	// SideNum = {2,4,5,6}
 	var depthOfCavitiesForSlots = onBackSide ? C_depthOfCavitiesForSlotsBack[sidesMap[sideNum-1]] : C_depthOfCavitiesForSlotsFront[sidesMap[sideNum-1]];
 	return getThickness(sideNum)-depthOfCavitiesForSlots;
+
 }
 function assemblySlotWidthTol(sideNum,onBackSide)	{	// SideNum = {2,4,5,6}
 	return 0.1;
@@ -647,8 +687,8 @@ function assemblySlotWidthTol(sideNum,onBackSide)	{	// SideNum = {2,4,5,6}
 function sideCavityForAssemblySlotsDepthTolerance(sideNum)	{	// SideNum = {2,4,5,6}
 	return 0.1;
 }
-function sideCavityDepthTolerance(sideNum)	{	// SideNum = {2,4,5,6}
-	return 0.1;
+function sideCavityDepthTolerance(sideNum)	{	// SideNum = {2 top,4 bottom, 5 left, 6 right}
+	return 0.0;		
 }
 function getExpansionOffset(sideNum)	{	// SideNum = {2,4,5,6}
 	return C_sideExpansionOffset[sidesMap[sideNum-1]];
@@ -666,7 +706,7 @@ function getEdgeProfile(sideNum)	{	// SideNum = {2,4,5,6}
 	// Also, notice that the configuration of housing profile 2 has other constraints such as that you cannot have profile 2 specified for adjacent sides.
 	
 	if (C_type==1)	{
-		return new Array(10,1.2,7,1.6,10,false);	// Side Sections
+		return new Array(10,1.2,7,1.5,10,false);	// Side Sections
 	} else {
 		var profile2 = false;
 
@@ -688,7 +728,7 @@ function getEdgeProfile(sideNum)	{	// SideNum = {2,4,5,6}
 		if (profile2)	{
 			return new Array(0,0,10,2,18,true);		// Housing Profile 2	
 		} else {
-			return new Array(16,1,10,1.6,13,false);	// Housing Profile 1
+			return new Array(16,1,10,1.5,13,false);	// Housing Profile 1
 		}
 	}
 }
@@ -1062,7 +1102,7 @@ function roundedCorner(x,y, srcX,srcY, destX,destY, radius) {
 	
 	var alpha1 = getAngleOfLine(x,srcX,y,srcY);
 	var alpha2 = getAngleOfLine(x,destX,y,destY);
-	
+
 //	Print("alpha1="+alpha1/Math.PI*180+"\n");
 //	Print("alpha2="+alpha2/Math.PI*180+"\n");
 	
@@ -1421,6 +1461,7 @@ function createEnds(name, sideNum) {
 				var el = new DrillHole("el", 3.20);
 				fp.AddElement(el, centerX+cOffsetX*(i&1?-1:1), centerY+cOffsetY*(i&2?-1:1));
 				el.SetCountersink(sink_74A_M3);
+				M3count++;
 			}
 		break;
 		case 2: 	// Housing Profiles
@@ -1497,6 +1538,7 @@ function createEnds(name, sideNum) {
 				if (useStuds)	{
 					var el = new Bolt("el", "GU30", 8);
 				} else {
+				    M3count++;
 					var el = new DrillHole("el", 3.00);
 					el.SetCountersink(sink_74A_M3);
 				}
@@ -1568,7 +1610,7 @@ function createEnds(name, sideNum) {
 			case 2: 	// Housing Profiles
 				for(var i=0;i<4;i++)	{ // 0=UL, 1=UR, 2=LR, 3=LL
 					var profileCoordinates = profile1Coordinates;
-					
+
 					switch(i)	{
 						case 0: 	// Upper left
 							if (C_housingProfile2Top)	{
@@ -1656,12 +1698,15 @@ function createSides(name, sideNum)	{
 	var centerX = width/2;
 	var centerY = height/2;
 	var edgeProfileData = getEdgeProfile(sideNum);
-
+    
 		// Cavities on sides for side sections and housing profiles (both top and bottom cavities are possible outcomes)
 	for(var i=0;i<2;i++)	{	// i=0: Left, i=1: Right
 
 		var upperCavityDepth = getFrontSideOffset(sideNum) - (getPerimeterOffset(sideNum)-edgeProfileData[1]);
 		var underCavityDepth = (getPerimeterOffset(sideNum)-edgeProfileData[1]-edgeProfileData[3]) - getReverseSideOffset(sideNum);
+        //        if (upperCavityDepth > thicknessCodes[C_SchaefferHousings_UI_thickness]) upperCavityDepth=0;
+	    //        if (underCavityDepth > thicknessCodes[C_SchaefferHousings_UI_thickness]) underCavityDepth=0;
+
 
 		if (upperCavityDepth>0)	{
 			var slotDepth = edgeProfileData[0]-edgeProfileData[2];
@@ -1671,7 +1716,11 @@ function createSides(name, sideNum)	{
 			var el = new Cavity("el");
 			el.SetDepth(1);	// Temporary depth, necessary for scripting engine (v4.4)
 			fp.AddElement(el, centerX+cavOffset*(i&1?-1:1), centerY);
+
+			if (1.5 + upperCavityDepth > getThickness(sideNum))
+			    upperCavityDepth = getThickness(sideNum)-1.5;
 			el.MakeRectangular(cavWidth, height+4, upperCavityDepth + sideCavityDepthTolerance(sideNum), 1.5);
+			//el.MakeRectangular(cavWidth, height+4, 0.9, 1.5);
 			setRadiusAndToolForCavity(el);
 		}
 	 	if (underCavityDepth>0)	{
@@ -1683,7 +1732,7 @@ function createSides(name, sideNum)	{
 				cavWidth = 6+0.5;
 				cavOffset = (centerX-6+cavWidth/2);
 			}
-			
+
 			var el = new Cavity("el");
 			el.SetDepth(1);	// Temporary depth, necessary for scripting engine (v4.4)
 			fp.AddElement(el, centerX+cavOffset*(i&1?-1:1), centerY);
@@ -1706,8 +1755,9 @@ function createSides(name, sideNum)	{
 			var numberOfScrewHoles = parseInt(height/100)+1;
 			var screwHoleDist = height / numberOfScrewHoles;
 			var screwHoleStartOffset = screwHoleDist*(numberOfScrewHoles-1)/2;
-			
+
 			for(var a=0;a<numberOfScrewHoles;a++)	{
+			    M3count++;
 				var el = new DrillHole("el", 3.00);
 				fp.AddElement(el, centerX+(centerX-4)*(i&1?-1:1), centerY-screwHoleStartOffset+screwHoleDist*a);
 				el.SetCountersink(sink_74A_M3);
@@ -1743,6 +1793,7 @@ function createSides(name, sideNum)	{
 				var housingBracketOffset = centerY-assemblySlotDepth(sideNum, i)-6.5;
 
 				for(var a=0;a<housingBrackets;a++)	{
+				    M3count++;
 					var el = new DrillHole("el", 3.00);
 					el.SetCountersink(sink_74A_M3);
 					fp.AddElement(el, centerX-housingBracketStartOffset+housingBracketDist*a, centerY+housingBracketOffset*(i&1?1:-1));	// (i&1?1:-1) is "reversed" compared to createSides() but this is on purpose to make sure the "top" side of the panel matches the "back" of the enclosure.
@@ -1798,9 +1849,29 @@ function createSides(name, sideNum)	{
 		}		
 	}
 		
-	fp.UnsetModified().GridOff();	
+	fp.UnsetModified().GridOff();
 	return fp;
 }
+
+
+function orderAdditionalScrewsM3()	{
+	if (M3count<=0) return;
+	
+	var package = Math.round( M3count /50 ); //this because I'm new to JS & just for the case, that the last line is not doing the intended
+	while (package*50 < M3count) package++;
+	
+	if (C_orderBlackItems) {
+	    if (C_SchaefferHousings_UI_thickness < 3 ) //6mm until for 2-3mm thickness
+			OrderAddItem("GGRB3306",package);
+		else           //8mm
+		    OrderAddItem("GGRB3308",package);
+	} else {
+		if (C_SchaefferHousings_UI_thickness < 3 ) //6mm
+			OrderAddItem("GGRB2306",package);
+		else			//8mm
+			OrderAddItem("GGRB2308",package);
+	}
+} 
 
 /**
  * Create order
@@ -1811,8 +1882,8 @@ function createOrder()	{
 		case 1:
 			var itemID = "GLGP10"+C_sideSectionType+(C_orderBlackItems?"3":"1");
 			OrderAddItemWithLength(itemID, 2, profileLengths);	// Side Sections
-
 			OrderAddItem("GGMS11"+(C_orderBlackItems?"2":"1")+"2",1);	// Assembly Kit
+			M3count-=12; //8 M3 Screws already ordered;
 		break;
 		case 2:
 			var profile2Cnt = 
@@ -1834,8 +1905,13 @@ function createOrder()	{
 			}
 
 			OrderAddItem("GGMS16"+(C_orderBlackItems?"2":"1")+"2",1);	// Assembly Kit
+			M3count-=12; //8 M3 Screws already ordered;
 		break;
 	}
+	
+	orderAdditionalScrewsM3()    
+	
+		
 	
 		// Edge Grinding:
 	if (C_addEdgeGrinding)	{
