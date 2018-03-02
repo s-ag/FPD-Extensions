@@ -6,7 +6,7 @@
  *  See bottom for more details.
  *
  *  Licensed to Schaeffer AG for inclusion with Front Panel Designer.
- **************************************************************/
+ ***************************************************************/
 /*************************************************************
  * This is a JavaScript program written for a software called 
  * Front Panel Designer made by Schaeffer AG. 
@@ -22,7 +22,7 @@
  * tools and training resources published by SKAARHOJ K/S.
  *
  * - kasper
- *************************************************************/
+ **************************************************************/
 
 
 
@@ -257,10 +257,26 @@ function showUI()	{
 		var d = new Dialog(_("Housing with enclosure profiles"),500,100); // create the dialog window
 		d.Newline().VSpacer(10).NewlineC();
 	
+		d.VSpacer(10).Newline();
+        var HProfileCodes = new Array (1,2,3);
+        var HProfile = new Param(C_SchaefferHousings_UI_HProfile-1);
+        if (enclosureType.get()+1==2)	{
+            d.Spacer(25).Text(_("Housing Profile:")).NewlineC();
+            d.Spacer(25).RadioBox(HProfile, _(" Type \n1 HP1 (with slot side panels) \n2 HP2 (with screws)\n3 HP3 (Combo of HP1 and HP2)")).Newline();
+			d.Spacer(25).Text(_("Please find our enclosure manual on our website for more detailed information.")).Spacer(0).NewlineC();
+			d.Spacer(25).Text(_("https://www.schaeffer-ag.de/en/products/housings/")).Spacer(0).NewlineC();
+			d.Spacer(25).NewlineC(); //no difference...
+			d.VSpacer(20).Newline();
+			//https://www.schaeffer-ag.de/fileadmin/user_upload/Downloads/Handbuecher_Datenblaetter/PDFs/Housingassemblymanual.pdf
+		}
+
+	
 		var height = new Param(C_SchaefferHousings_UI_height.toString());
 		d.Spacer(25).Text(_("Height:"));
 		d.Spacer(10).TextEntry(1, height).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
 	}
+	
+
 	
 	var width = new Param(C_SchaefferHousings_UI_width.toString());
 	d.Spacer(25).Text(_("Width:"));
@@ -277,14 +293,6 @@ function showUI()	{
         d.Spacer(25).Text(_("Depth:"));
 	d.Spacer(10).TextEntry(1, depth).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
 
-	d.VSpacer(10).Newline();
-        var HProfileCodes = new Array (1,2,3);
-        var HProfile = new Param(C_SchaefferHousings_UI_HProfile-1);
-        if (enclosureType.get()+1==2)	{
-            d.Spacer(25).Text(_("Housing Profile:")).NewlineC();
-            d.Spacer(25).RadioBox(HProfile, _(" Type \n1 (slides'n'slots only) \n2 (sides with screws)\n3 (top with screws)")).Spacer(0).NewlineC();
-            d.VSpacer(10).Newline();
-        }
 	var thickness = new Param(C_SchaefferHousings_UI_thickness);
 	d.Spacer(25).Text(_("Thickness of panels:")).NewlineC();
 	d.Spacer(25).RadioBox(thickness, _(" \n 2 mm \n2.5 mm\n3 mm\n4 mm")).Spacer(0).NewlineC();
