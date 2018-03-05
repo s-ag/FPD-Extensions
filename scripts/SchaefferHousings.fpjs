@@ -1,4 +1,4 @@
-﻿/***************************************************************
+/***************************************************************
  *  (c) 2013-2015 SKAARHOJ K/S, www.skaarhoj.com
  *  Author: Kasper Skårhøj <kasper@skaarhoj.com>
  *
@@ -245,6 +245,8 @@ function showUI()	{
 	                                 
 	
 	C_type = enclosureType.get()+1; 
+	var HProfileCodes = new Array (1,2,3);
+    var HProfile = new Param(C_SchaefferHousings_UI_HProfile-1);
 	
 	if (enclosureType.get()+1==1)	{
 		var d = new Dialog(_("Housing with side profiles"),500,100); // create the dialog window
@@ -256,10 +258,9 @@ function showUI()	{
 	} else if (enclosureType.get()+1==2)	{
 		var d = new Dialog(_("Housing with enclosure profiles"),500,100); // create the dialog window
 		d.Newline().VSpacer(10).NewlineC();
-	
+		
 		d.VSpacer(10).Newline();
-        var HProfileCodes = new Array (1,2,3);
-        var HProfile = new Param(C_SchaefferHousings_UI_HProfile-1);
+        
         if (enclosureType.get()+1==2)	{
             d.Spacer(25).Text(_("Housing Profile:")).NewlineC();
             d.Spacer(25).RadioBox(HProfile, _(" Type \n1 HP1 (with slot side panels) \n2 HP2 (with screws)\n3 HP3 (Combo of HP1 and HP2)")).Newline();
@@ -292,7 +293,7 @@ function showUI()	{
         var depth = new Param(C_SchaefferHousings_UI_depth.toString());
         d.Spacer(25).Text(_("Depth:"));
 	d.Spacer(10).TextEntry(1, depth).Spacer(5).Text(_("mm")).Spacer(0).NewlineC();
-
+	
 	var thickness = new Param(C_SchaefferHousings_UI_thickness);
 	d.Spacer(25).Text(_("Thickness of panels:")).NewlineC();
 	d.Spacer(25).RadioBox(thickness, _(" \n 2 mm \n2.5 mm\n3 mm\n4 mm")).Spacer(0).NewlineC();
