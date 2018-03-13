@@ -263,7 +263,7 @@ function showUI()	{
         
         if (enclosureType.get()+1==2)	{
             d.Spacer(25).Text(_("Housing Profile:")).NewlineC();
-            d.Spacer(25).RadioBox(HProfile, _(" Type \nHP 1 (slot panels) \n2HP 2 (screw in top/bottom panels) \nHP 1 and 2 combo")).Newline();
+            d.Spacer(25).RadioBox(HProfile, _(" Type \nHP 1 (slot panels) \n2HP 2 (screw-in top/bottom panels) \nHP 1 and 2 combo")).Newline();
 			d.Spacer(25).Text(_("Please find our enclosure manual on our website for more detailed information.")).Spacer(0).NewlineC();
 			d.Spacer(25).Text(_("www.frontpanelexpress.com/products/enclosures/")).Spacer(0).NewlineC();
 			d.Spacer(25).NewlineC(); //no difference...
