@@ -1,0 +1,161 @@
+/************************************************************
+ * (c) 2017-2018 Schaeffer AG www.schaeffer-ag.de
+ *  Author: Tobias Tschirch tt@schaeffer-ag.de
+ *
+ * This is a JavaScript program written for a software called 
+ * Front Panel Designer made by Schaeffer AG. 
+ * Front Panel Designer is a CAD application for design and 
+ * online ordering of aluminum panels.
+ *
+ * The script creates a perspex panel for a display that fits
+ * into a cut-out surrounded by a cavity on a front panel.
+ *
+ * This script is Open Source under GNU/GPL license.
+ * See bottom for more details.
+ ************************************************************/
+
+// Global settings
+
+// size of the gap between display and cavity on frontpanel
+// and between cut-out and inner rectangle of cavity on display
+var C_gap = 0.2;
+
+
+/*****************************************
+ * No changes to be made below this line *
+ *****************************************/
+
+function MessageBoxError(msg) {
+	var d = new Dialog("Message",300,200);
+	d.Newline().Spacer(25).Text(msg).Spacer(25);
+	d.Newline();
+	d.Newline().Spacer(0).DlgButton(1, "Ok!").Spacer(0);
+	d.Show();
+	Error(msg);
+}
+
+// main
+if (!HasFrontpanel())
+    Error("Please open or create frontpanel first.");
+
+var fp = frontpanel;
+var sel = fp.Selection();
+
+// check whether selection is valid
+if (sel.length != 2) {
+  	MessageBoxError("Please select two elements: A rectangular cavity and rectangular cut-out.");
+}
+var cav = sel[0];
+var rect = sel[1]
+if (cav.IsRectHole()) {
+	// swap variables
+	[cav,rect] = [rect,cav];
+}
+if (!cav.IsCavity() || !rect.IsRectHole()) {
+  	MessageBoxError("One of the selected elements is not a rectangular cut-out or not a cavity.");
+}
+
+// calculate parameters for display panel
+var dWidth  = cav.Width()  - 2 * C_gap;
+var dHeight = cav.Height() - 2 * C_gap;
+var dRadius = Math.max(cav.CornerRadius() - C_gap, 0);
+var dThick = Math.min(Math.floor(fp.Thickness()), 4);
+
+// calculate preliminary parameters for cavity on display
+var cWidth  = dWidth  + 1;
+var cHeight = dHeight + 1;
+var cRadius = dRadius + 0.5;
+var cWidthInner = rect.Width() - 2 * C_gap;
+var cHeightInner = rect.Height() - 2 * C_gap;
+var cRadiusInner = Math.max(rect.CornerRadius() - C_gap, 0);
+var cOffsetX =  rect.X() - cav.X();
+var cOffsetY =  rect.Y() - cav.Y();
+
+// calculate cavity depth
+var cDepth = fp.Thickness() - cav.Depth();
+
+/* adjust size and position of cavity on display,
+ * if distance between outer and inner rectangle of the 
+ * cavity is too small for the 3mm cutter
+ *
+ *  ,----------------------------------.
+ *  | cavity       ^                   | 
+ *  | outer rect.  | dy2               |
+ *  |              v                   |
+ *  |      ,-----------------.         |
+ *  | dx1  | cavity          |   dx2   |
+ *  |<---->| inner rectangle |<------->|
+ *  |      |                 |         |
+ *  |      `-----------------´         |
+ *  |              ^                   |
+ *  |              | dy1               |
+ *  |              v                   | 
+ *  `----------------------------------´
+*/
+// calculate distance between outer and inner rectangle
+var dx1 = (cWidth  - cWidthInner)  / 2 + cOffsetX;
+var dx2 = (cWidth  - cWidthInner)  / 2 - cOffsetX;
+var dy1 = (cHeight - cHeightInner) / 2 + cOffsetY;
+var dy2 = (cHeight - cHeightInner) / 2 - cOffsetY;
+
+// adjust distance between outer and inner rectangle
+var dx1New = Math.max(3.5, dx1);
+var dx2New = Math.max(3.5, dx2);
+var dy1New = Math.max(3.5, dy1);
+var dy2New = Math.max(3.5, dy2);
+
+//Print ("dx1:    " + dx1 + " dx2:    " + dx2 + " dy1:    " + dy1 + " dy2:    " + dy2 + "\n");
+//Print ("dx1New: " + dx1New + " dx2New: " + dx2New + " dy1New: " + dy1New + " dy2New: " + dy2New + "\n");
+
+// calculate new size of cavity
+cWidth  = cWidthInner  + dx1New + dx2New;
+cHeight = cHeightInner + dy1New + dy2New;
+
+// calculate size difference between old and new cavity
+var diffDx = dx2New - dx2 - (dx1New - dx1);
+var diffDy = dy2New - dy2 - (dy1New - dy1);
+
+// calculate position of cavity
+var cX = (dWidth  + diffDx) / 2;
+var cY = (dHeight + diffDy) / 2;
+
+// calulate new offset of inner rectangle of cavity
+cOffsetX = cOffsetX - diffDx / 2;
+cOffsetY = cOffsetY - diffDy / 2;
+
+// create display
+var dispName = fp.Name() + "_acrylic_display";
+var disp = new Frontpanel(dispName, dThick, dWidth, dHeight, acryl, acryl_clear);
+disp.SetCornerRadii(dRadius, dRadius, dRadius, dRadius);
+AddFrontpanel(disp);
+
+// create cavity
+var dCav = new Cavity("");
+dCav.MakeRectInRect(cWidth, cHeight, cDepth, 
+			cWidthInner, cHeightInner, 
+			cRadius, cRadiusInner, 
+			cOffsetX, cOffsetY);
+Print(dCav.OffsetX() + " " + dCav.OffsetY() + "\n");
+
+dCav.SetTool(cutter_3_0mm);
+disp.AddElement(dCav, cX, cY);
+
+/************************************************************
+* (c) 2017-2018 Schaeffer AG www.schaeffer-ag.de
+*  Author: Tobias Tschirch tt@schaeffer-ag.de
+*
+*  This script is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2 of the License, or
+*  (at your option) any later version.
+*
+*  The GNU General Public License can be found at
+*  http://www.gnu.org/copyleft/gpl.html.
+*
+*  This script is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  This copyright notice MUST APPEAR in all copies of the script!
+***************************************************************/
