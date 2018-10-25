@@ -20,19 +20,28 @@
 // and between cut-out and inner rectangle of cavity on display
 var C_gap = 0.2;
 
+// maximum available thickness of acrylic
+var C_acrylicMaxThick = 4.0;
+
 
 /*****************************************
  * No changes to be made below this line *
  *****************************************/
 
-function MessageBoxError(msg) {
+function MessageBox(msg)
+{
 	var d = new Dialog("Message",300,200);
 	d.Newline().Spacer(25).Text(msg).Spacer(25);
 	d.Newline();
 	d.Newline().Spacer(0).DlgButton(1, "Ok!").Spacer(0);
 	d.Show();
+};
+
+function MessageBoxError(msg) 
+{
+	MessageBox(msg);
 	Error(msg);
-}
+};
 
 // main
 if (!HasFrontpanel())
@@ -59,7 +68,14 @@ if (!cav.IsCavity() || !rect.IsRectHole()) {
 var dWidth  = cav.Width()  - 2 * C_gap;
 var dHeight = cav.Height() - 2 * C_gap;
 var dRadius = Math.max(cav.CornerRadius() - C_gap, 0);
-var dThick = Math.min(Math.floor(fp.Thickness()), 4);
+var dThick = Math.min(Math.floor(fp.Thickness()), C_acrylicMaxThick);
+
+if (dThick < 2) {
+	dThick = 2;
+	var diff = dThick - fp.Thickness();
+	MessageBox("Warning! Front panel is thinner than available acrylic. Display panel will stand out by " + diff.toString() + " mm.")
+}
+
 
 // calculate preliminary parameters for cavity on display
 var cWidth  = dWidth  + 1;
@@ -73,6 +89,10 @@ var cOffsetY =  rect.Y() - cav.Y();
 
 // calculate cavity depth
 var cDepth = fp.Thickness() - cav.Depth();
+if (cDepth > dThick) {
+	var minDepth = fp.Thickness() - (C_acrylicMaxThick - 1.0);
+	MessageBoxError("Cavity on front panel is not deep enough. Depth must be at least " + minDepth.toString() + " mm.");
+}
 
 /* adjust size and position of cavity on display,
  * if distance between outer and inner rectangle of the 
