@@ -1,4 +1,4 @@
-/***************************************************************
+﻿/***************************************************************
  *  (c) 2013-2015 SKAARHOJ K/S, www.skaarhoj.com
  *  Author: Kasper Skårhøj <kasper@skaarhoj.com>
  *
@@ -6,7 +6,7 @@
  *  See bottom for more details.
  *
  *  Licensed to Schaeffer AG for inclusion with Front Panel Designer.
- ***************************************************************/
+ ***************************************************************%/
 /*************************************************************
  * This is a JavaScript program written for a software called 
  * Front Panel Designer made by Schaeffer AG. 
@@ -353,6 +353,7 @@ function showUI()	{
 	C_SchaefferHousings_UI_dryRun = dryRun.get();
         C_SchaefferHousings_UI_HProfile = HProfileCodes[HProfile.get()];
 
+		//This section determines the screw vs slot usage
         //((C_SchaefferHousings_UI_HProfile=1;
         if (C_SchaefferHousings_UI_HProfile == 1) {
             C_housingProfile2Top = false;
@@ -401,7 +402,12 @@ function showUI()	{
 			break;
 			case 2:
 				C_height = rack.get()*1.75*25.4-0.5;
-				C_housingProfile2Top = true;
+				//Next command line was probably written before we had various housing profiles
+				//causing glitches together with hp2 (trying to insert screws an 3 sides!) 
+				//or is not fitting the order script with screws & stuff.
+				//when intended to have all racks with combo profile, C_SchaefferHousings_UI_HProfile must be 3.
+				
+				//C_housingProfile2Top = true;
 			break;
 		
 		}
