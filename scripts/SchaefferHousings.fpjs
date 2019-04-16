@@ -118,6 +118,14 @@ var C_housingProfileRightHeight = 0;	// Must be less than C_height. If zero = of
 
 var C_dryRun = false;		// If set, the script will render only the "Front" panel
 
+//distributes the cavity tolerance to the upper and lower cavity.
+//four Modes here Side_Cavity_Tolerance_Mode: 
+//1: all tolerance added to upper cavity (simplest)
+//2: all tolerance added to under cavity if presented
+//3: tolerance added equally to cavities if undercavity presented
+//4: distributed in linear ratio
+var Side_Cavity_Tolerance_Mode = 4;
+
 
 
 
@@ -703,7 +711,7 @@ function sideCavityForAssemblySlotsDepthTolerance(sideNum)	{	// SideNum = {2,4,5
 	return 0.1;
 }
 function sideCavityDepthTolerance(sideNum)	{	// SideNum = {2 top,4 bottom, 5 left, 6 right}
-	return 0.0;		
+	return 0.1;		
 }
 function getExpansionOffset(sideNum)	{	// SideNum = {2,4,5,6}
 	return C_sideExpansionOffset[sidesMap[sideNum-1]];
@@ -1328,6 +1336,35 @@ function setRadiusAndToolForCavity(cv)	{
 	}
 }
 
+
+//distributes the cavity tolerance to the upper and lower cavity.
+//four Modes here Side_Cavity_Tolerance_Mode: 
+//1: all tolerance added to upper cavity (simplest)
+//2: all tolerance added to under cavity if presented
+//3: tolerance added equally to cavities if undercavity presented
+//4: distributed in linear ratio
+function GetUpperCavityTolerance(sumTolerance, upperCavityDepth, underCavityDepth)
+{
+ if (underCavityDepth < 0.0001) return sumTolerance;
+ if (upperCavityDepth < 0.0001) return 0.0;
+ if (Side_Cavity_Tolerance_Mode == 1) return sumTolerance;
+ if (Side_Cavity_Tolerance_Mode == 2) return 0.0;
+ if (Side_Cavity_Tolerance_Mode == 3) return sumTolerance/2.0;
+ if (Side_Cavity_Tolerance_Mode == 4) return sumTolerance*upperCavityDepth/(upperCavityDepth+underCavityDepth);
+}
+function GetUnderCavityTolerance(sumTolerance, upperCavityDepth, underCavityDepth)
+{
+ if (upperCavityDepth < 0.0001) return sumTolerance;
+ if (underCavityDepth < 0.0001) return 0.0;
+ if (Side_Cavity_Tolerance_Mode == 1) return 0.0;
+ if (Side_Cavity_Tolerance_Mode == 2) return sumTolerance;
+ if (Side_Cavity_Tolerance_Mode == 3) return sumTolerance/2.0;
+ if (Side_Cavity_Tolerance_Mode == 4) return sumTolerance*underCavityDepth/(upperCavityDepth+underCavityDepth);
+}
+
+
+
+
 /**
  * Creates top, bottom, left and right side panels engravings
  *
@@ -1341,8 +1378,9 @@ function createHPGLGuideEngravingOfSide(sideNum)	{
 	var centerX = width/2;
 	var centerY = getThickness(sideNum)/2;
 	var edgeProfileData = getEdgeProfile(sideNum);
-	
 	var coords = new Array();
+	var cavDepthTol = sideCavityDepthTolerance(sideNum);
+	
 
 		// Cavities on sides for side sections and housing profiles (both top and bottom cavities are possible outcomes)
 	for(var i=0;i<2;i++)	{	// i=0: Left, i=1: Right
@@ -1358,8 +1396,8 @@ function createHPGLGuideEngravingOfSide(sideNum)	{
 			var cavOffset = (centerX-slotDepth+cavWidth/2);
 			
 			coords[i][cIdx++] = new Array((cavOffset-cavWidth/2)*(i&1?-1:1),centerY);
-			coords[i][cIdx++] = new Array((cavOffset-cavWidth/2)*(i&1?-1:1),centerY-(upperCavityDepth+sideCavityDepthTolerance(sideNum)));
-			coords[i][cIdx++] = new Array(centerX*(i&1?-1:1),centerY-(upperCavityDepth+sideCavityDepthTolerance(sideNum)));
+			coords[i][cIdx++] = new Array((cavOffset-cavWidth/2)*(i&1?-1:1),centerY-(upperCavityDepth+GetUpperCavityTolerance(cavDepthTol, upperCavityDepth, underCavityDepth)));
+			coords[i][cIdx++] = new Array(centerX*(i&1?-1:1),centerY-(upperCavityDepth+GetUpperCavityTolerance(cavDepthTol, upperCavityDepth, underCavityDepth)));
 		} else {
 			coords[i][cIdx++] = new Array(centerX*(i&1?-1:1),centerY);
 		}
@@ -1372,9 +1410,9 @@ function createHPGLGuideEngravingOfSide(sideNum)	{
 				cavWidth = 6+0.5;
 				cavOffset = (centerX-6+cavWidth/2);
 			}
+			coords[i][cIdx++] = new Array(centerX*(i&1?-1:1), -centerY+(underCavityDepth+GetUnderCavityTolerance(cavDepthTol, upperCavityDepth, underCavityDepth)));
+			coords[i][cIdx++] = new Array((cavOffset-cavWidth/2)*(i&1?-1:1), -centerY+(underCavityDepth+GetUnderCavityTolerance(cavDepthTol, upperCavityDepth, underCavityDepth)));
 
-			coords[i][cIdx++] = new Array(centerX*(i&1?-1:1), -centerY+(underCavityDepth+sideCavityDepthTolerance(sideNum)));
-			coords[i][cIdx++] = new Array((cavOffset-cavWidth/2)*(i&1?-1:1), -centerY+(underCavityDepth+sideCavityDepthTolerance(sideNum)));
 			coords[i][cIdx++] = new Array((cavOffset-cavWidth/2)*(i&1?-1:1), -centerY);
 		} else {
 			coords[i][cIdx++] = new Array(centerX*(i&1?-1:1),-centerY);
@@ -1704,6 +1742,7 @@ function createSides(name, sideNum)	{
 	
 	var width = getPanelWidth(sideNum);
 	var height = getPanelHeight(sideNum);
+	var cavDepthTol = sideCavityDepthTolerance(sideNum);
 
 		// Create panel:
 	var fp = new Frontpanel(C_panelNamesPrefix+name+C_panelNamesSuffix, getThickness(sideNum), width, height, alu_elox);
@@ -1734,7 +1773,7 @@ function createSides(name, sideNum)	{
 
 			if (1.5 + upperCavityDepth > getThickness(sideNum))
 			    upperCavityDepth = getThickness(sideNum)-1.5;
-			el.MakeRectangular(cavWidth, height+4, upperCavityDepth + sideCavityDepthTolerance(sideNum), 1.5);
+			el.MakeRectangular(cavWidth, height+4, upperCavityDepth + GetUpperCavityTolerance(cavDepthTol, upperCavityDepth, underCavityDepth), 1.5);
 			//el.MakeRectangular(cavWidth, height+4, 0.9, 1.5);
 			setRadiusAndToolForCavity(el);
 		}
@@ -1751,7 +1790,7 @@ function createSides(name, sideNum)	{
 			var el = new Cavity("el");
 			el.SetDepth(1);	// Temporary depth, necessary for scripting engine (v4.4)
 			fp.AddElement(el, centerX+cavOffset*(i&1?-1:1), centerY);
-			el.MakeRectangular(cavWidth, height+4, underCavityDepth + sideCavityDepthTolerance(sideNum), 1.5);
+			el.MakeRectangular(cavWidth, height+4, underCavityDepth + GetUnderCavityTolerance(cavDepthTol, upperCavityDepth, underCavityDepth), 1.5);
 			setRadiusAndToolForCavity(el);
 			el.PutOnReverseSide();
 
