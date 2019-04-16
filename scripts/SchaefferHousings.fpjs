@@ -1,4 +1,4 @@
-/***************************************************************
+﻿/***************************************************************
  *  (c) 2013-2015 SKAARHOJ K/S, www.skaarhoj.com
  *  Author: Kasper Skårhøj <kasper@skaarhoj.com>
  *
@@ -117,6 +117,14 @@ var C_sideExpansionOffset = new Array(0,0,0,0); // (Top, Bottom, Left, Right). T
 var C_housingProfileRightHeight = 0;	// Must be less than C_height. If zero = off. Imposes various restrictions on the bottom plate, among other that it has to be bent a bit. So this is a special case. Also, cannot be used with housing brackets on the bottom plate (front and back).
 
 var C_dryRun = false;		// If set, the script will render only the "Front" panel
+
+//distributes the cavity tolerance to the upper and lower cavity.
+//four Modes here Side_Cavity_Tolerance_Mode: 
+//1: all tolerance added to upper cavity (simplest)
+//2: all tolerance added to under cavity if presented
+//3: tolerance added equally to cavities if undercavity presented
+//4: distributed in linear ratio
+var Side_Cavity_Tolerance_Mode = 4;
 
 
 
@@ -353,6 +361,7 @@ function showUI()	{
 	C_SchaefferHousings_UI_dryRun = dryRun.get();
         C_SchaefferHousings_UI_HProfile = HProfileCodes[HProfile.get()];
 
+		//This section determines the screw vs slot usage
         //((C_SchaefferHousings_UI_HProfile=1;
         if (C_SchaefferHousings_UI_HProfile == 1) {
             C_housingProfile2Top = false;
@@ -401,7 +410,12 @@ function showUI()	{
 			break;
 			case 2:
 				C_height = rack.get()*1.75*25.4-0.5;
-				C_housingProfile2Top = true;
+				//Next command line was probably written before we had various housing profiles
+				//causing glitches together with hp2 (trying to insert screws an 3 sides!) 
+				//or is not fitting the order script with screws & stuff.
+				//when intended to have all racks with combo profile, C_SchaefferHousings_UI_HProfile must be 3.
+				
+				//C_housingProfile2Top = true;
 			break;
 		
 		}
@@ -697,7 +711,7 @@ function sideCavityForAssemblySlotsDepthTolerance(sideNum)	{	// SideNum = {2,4,5
 	return 0.1;
 }
 function sideCavityDepthTolerance(sideNum)	{	// SideNum = {2 top,4 bottom, 5 left, 6 right}
-	return 0.0;		
+	return 0.1;		
 }
 function getExpansionOffset(sideNum)	{	// SideNum = {2,4,5,6}
 	return C_sideExpansionOffset[sidesMap[sideNum-1]];
@@ -1322,6 +1336,35 @@ function setRadiusAndToolForCavity(cv)	{
 	}
 }
 
+
+//distributes the cavity tolerance to the upper and lower cavity.
+//four Modes here Side_Cavity_Tolerance_Mode: 
+//1: all tolerance added to upper cavity (simplest)
+//2: all tolerance added to under cavity if presented
+//3: tolerance added equally to cavities if undercavity presented
+//4: distributed in linear ratio
+function GetUpperCavityTolerance(sumTolerance, upperCavityDepth, underCavityDepth)
+{
+ if (underCavityDepth < 0.0001) return sumTolerance;
+ if (upperCavityDepth < 0.0001) return 0.0;
+ if (Side_Cavity_Tolerance_Mode == 1) return sumTolerance;
+ if (Side_Cavity_Tolerance_Mode == 2) return 0.0;
+ if (Side_Cavity_Tolerance_Mode == 3) return sumTolerance/2.0;
+ if (Side_Cavity_Tolerance_Mode == 4) return sumTolerance*upperCavityDepth/(upperCavityDepth+underCavityDepth);
+}
+function GetUnderCavityTolerance(sumTolerance, upperCavityDepth, underCavityDepth)
+{
+ if (upperCavityDepth < 0.0001) return sumTolerance;
+ if (underCavityDepth < 0.0001) return 0.0;
+ if (Side_Cavity_Tolerance_Mode == 1) return 0.0;
+ if (Side_Cavity_Tolerance_Mode == 2) return sumTolerance;
+ if (Side_Cavity_Tolerance_Mode == 3) return sumTolerance/2.0;
+ if (Side_Cavity_Tolerance_Mode == 4) return sumTolerance*underCavityDepth/(upperCavityDepth+underCavityDepth);
+}
+
+
+
+
 /**
  * Creates top, bottom, left and right side panels engravings
  *
@@ -1335,8 +1378,9 @@ function createHPGLGuideEngravingOfSide(sideNum)	{
 	var centerX = width/2;
 	var centerY = getThickness(sideNum)/2;
 	var edgeProfileData = getEdgeProfile(sideNum);
-	
 	var coords = new Array();
+	var cavDepthTol = sideCavityDepthTolerance(sideNum);
+	
 
 		// Cavities on sides for side sections and housing profiles (both top and bottom cavities are possible outcomes)
 	for(var i=0;i<2;i++)	{	// i=0: Left, i=1: Right
@@ -1352,8 +1396,8 @@ function createHPGLGuideEngravingOfSide(sideNum)	{
 			var cavOffset = (centerX-slotDepth+cavWidth/2);
 			
 			coords[i][cIdx++] = new Array((cavOffset-cavWidth/2)*(i&1?-1:1),centerY);
-			coords[i][cIdx++] = new Array((cavOffset-cavWidth/2)*(i&1?-1:1),centerY-(upperCavityDepth+sideCavityDepthTolerance(sideNum)));
-			coords[i][cIdx++] = new Array(centerX*(i&1?-1:1),centerY-(upperCavityDepth+sideCavityDepthTolerance(sideNum)));
+			coords[i][cIdx++] = new Array((cavOffset-cavWidth/2)*(i&1?-1:1),centerY-(upperCavityDepth+GetUpperCavityTolerance(cavDepthTol, upperCavityDepth, underCavityDepth)));
+			coords[i][cIdx++] = new Array(centerX*(i&1?-1:1),centerY-(upperCavityDepth+GetUpperCavityTolerance(cavDepthTol, upperCavityDepth, underCavityDepth)));
 		} else {
 			coords[i][cIdx++] = new Array(centerX*(i&1?-1:1),centerY);
 		}
@@ -1366,9 +1410,9 @@ function createHPGLGuideEngravingOfSide(sideNum)	{
 				cavWidth = 6+0.5;
 				cavOffset = (centerX-6+cavWidth/2);
 			}
+			coords[i][cIdx++] = new Array(centerX*(i&1?-1:1), -centerY+(underCavityDepth+GetUnderCavityTolerance(cavDepthTol, upperCavityDepth, underCavityDepth)));
+			coords[i][cIdx++] = new Array((cavOffset-cavWidth/2)*(i&1?-1:1), -centerY+(underCavityDepth+GetUnderCavityTolerance(cavDepthTol, upperCavityDepth, underCavityDepth)));
 
-			coords[i][cIdx++] = new Array(centerX*(i&1?-1:1), -centerY+(underCavityDepth+sideCavityDepthTolerance(sideNum)));
-			coords[i][cIdx++] = new Array((cavOffset-cavWidth/2)*(i&1?-1:1), -centerY+(underCavityDepth+sideCavityDepthTolerance(sideNum)));
 			coords[i][cIdx++] = new Array((cavOffset-cavWidth/2)*(i&1?-1:1), -centerY);
 		} else {
 			coords[i][cIdx++] = new Array(centerX*(i&1?-1:1),-centerY);
@@ -1698,6 +1742,7 @@ function createSides(name, sideNum)	{
 	
 	var width = getPanelWidth(sideNum);
 	var height = getPanelHeight(sideNum);
+	var cavDepthTol = sideCavityDepthTolerance(sideNum);
 
 		// Create panel:
 	var fp = new Frontpanel(C_panelNamesPrefix+name+C_panelNamesSuffix, getThickness(sideNum), width, height, alu_elox);
@@ -1728,7 +1773,7 @@ function createSides(name, sideNum)	{
 
 			if (1.5 + upperCavityDepth > getThickness(sideNum))
 			    upperCavityDepth = getThickness(sideNum)-1.5;
-			el.MakeRectangular(cavWidth, height+4, upperCavityDepth + sideCavityDepthTolerance(sideNum), 1.5);
+			el.MakeRectangular(cavWidth, height+4, upperCavityDepth + GetUpperCavityTolerance(cavDepthTol, upperCavityDepth, underCavityDepth), 1.5);
 			//el.MakeRectangular(cavWidth, height+4, 0.9, 1.5);
 			setRadiusAndToolForCavity(el);
 		}
@@ -1745,7 +1790,7 @@ function createSides(name, sideNum)	{
 			var el = new Cavity("el");
 			el.SetDepth(1);	// Temporary depth, necessary for scripting engine (v4.4)
 			fp.AddElement(el, centerX+cavOffset*(i&1?-1:1), centerY);
-			el.MakeRectangular(cavWidth, height+4, underCavityDepth + sideCavityDepthTolerance(sideNum), 1.5);
+			el.MakeRectangular(cavWidth, height+4, underCavityDepth + GetUnderCavityTolerance(cavDepthTol, upperCavityDepth, underCavityDepth), 1.5);
 			setRadiusAndToolForCavity(el);
 			el.PutOnReverseSide();
 
