@@ -1,6 +1,13 @@
-// Scale engraving example.
-// Scale engraving example.
+// Scale Generator
 
+
+
+function get_text_engraving(int_value, textsize) {
+    var t = new TextEngraving("", int_value);
+    t.SetAlignment(align_center);
+    t.SetTextSize(textsize);
+    return t;
+}
 
 function extend(obj, src) {
     for (var key in src) {
@@ -11,7 +18,7 @@ function extend(obj, src) {
 
 // Needs a focussed frontpanel.
 if (!HasFrontpanel())
-    Error(_("Bitte erzeugen Sie erst eine Frontplatte."));
+    Error(_("Please create a frontpanel first."));
 
 // Default settings
 var settings = { 
@@ -47,7 +54,7 @@ if ( sel.length == 1 && (sel[0].IsGroup() || sel[0].IsHpglEngraving()) ) {
 }
 
 // Dialog for settings
-var dia = new Dialog(_("Skala erstellen"));
+var dia = new Dialog(_("Scale Generator"));
 
 var p_shape = new Param(settings["Shape"]);
 var p_linlog = new Param(settings["LinLog"]);
@@ -69,78 +76,74 @@ dia.VSpacer(5).Newline().Spacer(10);
 dia.Box().NewlineC();
 
 if (is_new) {
-	dia.Text(__("Neue Skala erstellen:|Choose parameters for scale:|Choisir des parametres pour la gravure:"));
+	dia.Text(_("Create new scale:"));
 } else {
-	dia.Text(_("Ausgewählte Skala bearbeiten"));
+	dia.Text(_("Edit selected scale:"));
 }
 
 dia.VSpacer(5).NewlineC().Divider().VSpacer(10).NewlineC();
 
-dia.RadioBox(p_shape, _("Form der Skala:\nRund\nLinear")).Spacer(25).NewlineC();
+dia.RadioBox(p_shape, _("Shape of scale:\nRound\nLinear")).Spacer(25).NewlineC();
 
-dia.RadioBox(p_linlog, _("Skalierung:\nLinear\nLogarithmisch")).Spacer(25).NewlineC();
+dia.RadioBox(p_linlog, _("Scaling:\nLinear\nLogarithmic")).Spacer(25).NewlineC();
 
 dia.VSpacer(10).BoxC().NewlineC();
-dia.Text(_("Radius bzw. Länge:")).SpinValue(p_size, 0, 10000, 1).Spacer(3).Text(__("mm"));
+dia.Text(_("Radius resp. Length:")).SpinValue(p_size, 0, 10000, 1).Spacer(3).Text(__("mm"));
 dia.VSpacer(5).NewlineC();
-dia.Text(_("Anfangswinkel:")).SpinValue(p_startangle, -360, 360, 5).Spacer(3).Text(__("deg"));
+dia.Text(_("Starting angle:")).SpinValue(p_startangle, -360, 360, 5).Spacer(3).Text(__("deg"));
 dia.VSpacer(5).NewlineC();
-dia.Text(_("Endwinkel:")).SpinValue(p_endangle, -360, 360, 5).Spacer(3).Text(__("deg"));
+dia.Text(_("End angle:")).SpinValue(p_endangle, -360, 360, 5).Spacer(3).Text(__("deg"));
 dia.EndBox().NewlineC();
 
 
 dia.VSpacer(5).NewlineC();
 dia.BoxC().NewlineC();
-dia.Text(_("Anzahl Skalenstriche:")).SpinValue(p_ticks, 0, 10000, 1);
+dia.Text(_("Number of tick marks:")).SpinValue(p_ticks, 0, 10000, 1);
 dia.VSpacer(5).NewlineC();
-dia.Text(_("Anzahl Teilstriche:")).SpinValue(p_subticks, 0, 10000, 1);
+dia.Text(_("Number of sub tick marks:")).SpinValue(p_subticks, 0, 10000, 1);
 dia.VSpacer(15).EndBox();
 
 
 dia.BoxC().NewlineC();
-dia.Spacer(8).Text(_("Länge:"));
+dia.Spacer(8).Text(_("Length:"));
 dia.SpinValue(p_ticklen, 0, 10000, 1).Spacer(3).Text(__("mm"));
 dia.Spacer(12).VSpacer(5).NewlineC();
-dia.Spacer(8).Text(_("Länge:"));
+dia.Spacer(8).Text(_("Length:"));
 dia.SpinValue(p_subticklen, 0, 10000, 1).Spacer(3).Text("mm");
 dia.Spacer(12).VSpacer(15).EndBox().NewlineC();
 
 
 dia.BoxC().NewlineC();
-dia.CheckBox(p_baseline, _("Grundlinie zeichnen"))
+dia.CheckBox(p_baseline, _("Plot Baseline"))
 dia.VSpacer(15).EndBox().NewlineC();
 
 dia.Divider().NewlineC();
 
 dia.BoxC().VSpacer(15).NewlineC();
-dia.CheckBox(p_ticklabel, _("Beschriftung hinzufügen:"));
+dia.CheckBox(p_ticklabel, _("Add labeling:"));
 dia.VSpacer(10).EndBox().NewlineC();
 
-//dia.BoxC().NewlineC().VSpacer(10);
-//dia.Text(__("(Die nachfolgenden Optionen sind nur gültig wenn 'Beschriftung hinzufügen' ausgewählt wurde.)"));
-//dia.EndBox().NewlineC();
-
-dia.BoxC().NewlineC().Text(_("Anfangswert:"));
+dia.BoxC().NewlineC().Text(_("Initial value:"));
 dia.SpinValue(p_tickstartvalue, -2000000000000, 2000000000000, 1);
-dia.Spacer(8).Text(_("Inkrement:"));
+dia.Spacer(8).Text(_("Increment:"));
 dia.SpinValue(p_tickincrementvalue, -2000000000000, 2000000000000, 1);
 dia.EndBox().NewlineC();
 
 
-dia.BoxC().VSpacer(5).NewlineC().Text(_("Abstand Beschriftung:"));
+dia.BoxC().VSpacer(5).NewlineC().Text(_("Label spacing:"));
 dia.SpinValue(p_labeldist, 0, 10000, 1).Spacer(3).Text("mm");
 dia.VSpacer(5).NewlineC();
-dia.Text(_("Textgröße:")).SpinValue(p_textsize, 0.1, 10000, 0.5)
+dia.Text(_("Text size:")).SpinValue(p_textsize, 0.1, 10000, 0.5)
 dia.Spacer(3).Text(_("mm"));
 dia.VSpacer(5).NewlineC();
-dia.CheckBox(p_rotatetext, _("Text drehen (bei runden Skalen)"));
+dia.CheckBox(p_rotatetext, _("Rotate text (with round scales)"));
 dia.VSpacer(10).NewlineC();
 dia.VSpacer(10).EndBox();
 
 dia.NewlineC();
 dia.Divider().NewlineC();
 dia.BoxC().VSpacer(10).NewlineC();
-dia.Spacer(0).DlgButton(0, _("Abbruch")).Spacer(5).DlgButton(1, _("Ok")).Spacer(0);
+dia.Spacer(0).DlgButton(0, _("Cancel")).Spacer(5).DlgButton(1, _("Ok")).Spacer(0);
 dia.EndBox().Spacer(10).VSpacer(10);
 
 if (1 == dia.Show()) {	// "Ok" button pressed
@@ -168,7 +171,7 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 
 	if(shape == 0) {
 		if (angle > 360 || angle < -360) {
-			Error("angle");
+			Error("Angle exceeds 360 degrees.");
 		}
 		if(angle == 360 || angle == -360) {
 			fullCircle = true;
@@ -212,9 +215,8 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 			hpgl.LineTo(x_n * (size + ticklen), y_n * (size + ticklen));
 			hpgl.Finish();
 			if (ticklabel && !(fullCircle && i == numticks - 1)) {
-				var t = new TextEngraving("", tickstartvalue + i*tickincrementvalue);
-				t.SetAlignment(align_center);
-				t.SetTextSize(textsize);
+				var t = get_text_engraving(tickstartvalue + i*tickincrementvalue, textsize);
+	
 				if(rotatetext){
 					t.Rotate( 90 - akt_phi*180/Math.PI );
 				}
@@ -253,9 +255,7 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 			hpgl.LineTo(x, ticklen);
 			hpgl.Finish();
 			if (ticklabel) {
-				var t = new TextEngraving("", tickstartvalue + i*tickincrementvalue);
-				t.SetTextSize(textsize);
-				t.SetAlignment(align_center);
+				var t = get_text_engraving(tickstartvalue + i*tickincrementvalue, textsize);
 				frontpanel.AddElement(t, x, ticklen + labeldist);
 				g.AddElement(t);
 			}
