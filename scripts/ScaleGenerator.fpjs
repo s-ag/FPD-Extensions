@@ -16,13 +16,13 @@ function extend(obj, src) {
     return obj;
 }
 
-function get_decimal_places(dbl_in) {
-	var idx =0;
-	while(Math.abs(dbl_in - Math.round(dbl_in)) > Number.MIN_VALUE && idx < Number.MAX_VALUE) {
-		idx = idx +1;
-		dbl_in = dbl_in * 10;
-	}
-	return idx;
+
+function get_decimal_places(dbl_str_in) {
+	
+	var dot_idx = dbl_str_in.indexOf('.');
+	if(dot_idx == -1)
+		return 0;
+	return dbl_str_in.length - dot_idx -1;
 }
 
 // Needs a focussed frontpanel.
@@ -43,8 +43,8 @@ var settings = {
 	BaseLine: 1,
 	TickLabel: 1,
 	LabelDist: 3,
-	TickStartValue: 1,
-	TickIncrementValue: 1,
+	TickStartValue: "1",
+	TickIncrementValue: "1",
 	TextSize: 4,
 	RotateText: 0
 };
@@ -81,6 +81,13 @@ var p_tickstartvalue = new Param(settings["TickStartValue"]);
 var p_tickincrementvalue = new Param(settings["TickIncrementValue"]);
 var p_textsize = new Param(settings["TextSize"]);
 var p_rotatetext = new Param(settings["RotateText"]);
+
+if(typeof(p_tickstartvalue.get()) === 'number') {
+	p_tickstartvalue = new Param(p_tickstartvalue.get().toString());
+	p_tickincrementvalue = new Param(p_tickincrementvalue.get().toString());
+}
+
+
 dia.VSpacer(5).Newline().Spacer(10);
 dia.Box().NewlineC();
 
@@ -133,11 +140,11 @@ dia.CheckBox(p_ticklabel, _("Add labeling:"));
 dia.VSpacer(10).EndBox().NewlineC();
 
 dia.BoxC().NewlineC().Text(_("Initial value:"));
-var tickstartvaluestr = new Param((parseFloat(p_tickstartvalue.get())).toFixed(get_decimal_places(p_tickstartvalue.get())));
-dia.TextEntry(1, tickstartvaluestr);
+//var tickstartvaluestr = new Param((parseFloat(p_tickstartvalue.get())).toFixed(get_decimal_places(p_tickstartvalue.get())));
+dia.TextEntry(1, p_tickstartvalue);
 dia.Spacer(8).Text(_("Increment:"));
-var tickincrementvaluestr = new Param((parseFloat(p_tickincrementvalue.get())).toFixed(get_decimal_places(p_tickincrementvalue.get())));
-dia.TextEntry(1, tickincrementvaluestr);
+//var tickincrementvaluestr = new Param((parseFloat(p_tickincrementvalue.get())).toFixed(get_decimal_places(p_tickincrementvalue.get())));
+dia.TextEntry(1, p_tickincrementvalue);
 dia.EndBox().NewlineC();
 
 
@@ -171,9 +178,11 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 	var baseline = p_baseline.get();
 	var ticklabel = p_ticklabel.get();
 	var labeldist = p_labeldist.get();
-	var tickstartvalue = parseFloat(tickstartvaluestr.get().replace(',','.'));
-	var tickincrementvalue = parseFloat(tickincrementvaluestr.get().replace(',','.'));
-	var decimal_places = Math.max(get_decimal_places(tickstartvalue), get_decimal_places(tickincrementvalue));
+	var tickstartnormed = p_tickstartvalue.get().replace(',','.');
+	var tickstartvalue = parseFloat(tickstartnormed);
+	var tickincrementnormed = p_tickincrementvalue.get().replace(',','.');
+	var tickincrementvalue = parseFloat(tickincrementnormed);
+	var decimal_places = Math.max(get_decimal_places(tickstartnormed), get_decimal_places(tickincrementnormed));
 	var textsize = p_textsize.get();
 	var rotatetext = p_rotatetext.get();
 	
@@ -324,8 +333,8 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 	settings["BaseLine"] = baseline;
 	settings["TickLabel"] = ticklabel;
 	settings["LabelDist"] = labeldist;
-	settings["TickStartValue"] = tickstartvalue;
-	settings["TickIncrementValue"] = tickincrementvalue;
+	settings["TickStartValue"] = tickstartvalue.toFixed(decimal_places);
+	settings["TickIncrementValue"] = tickincrementvalue.toFixed(decimal_places);
 	settings["TextSize"] = textsize;
 	settings["RotateText"] = rotatetext; 
 	element.SetExtInfo("ScaleGen|&#"+settings.toSource());
