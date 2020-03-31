@@ -2,8 +2,8 @@
 
 
 
-function get_text_engraving(int_value, textsize) {
-    var t = new TextEngraving("", int_value);
+function get_text_engraving(dbl_value, decimal_places, textsize) {
+    var t = new TextEngraving("", dbl_value.toFixed(decimal_places));
     t.SetAlignment(align_center);
     t.SetTextSize(textsize);
     return t;
@@ -14,6 +14,15 @@ function extend(obj, src) {
         if (src.hasOwnProperty(key)) obj[key] = src[key];
     }
     return obj;
+}
+
+function get_decimal_places(dbl_in) {
+	var idx =0;
+	while(Math.abs(dbl_in - Math.round(dbl_in)) > Number.MIN_VALUE && idx < Number.MAX_VALUE) {
+		idx = idx +1;
+		dbl_in = dbl_in * 10;
+	}
+	return idx;
 }
 
 // Needs a focussed frontpanel.
@@ -124,9 +133,11 @@ dia.CheckBox(p_ticklabel, _("Add labeling:"));
 dia.VSpacer(10).EndBox().NewlineC();
 
 dia.BoxC().NewlineC().Text(_("Initial value:"));
-dia.SpinValue(p_tickstartvalue, -2000000000000, 2000000000000, 1);
+var tickstartvaluestr = new Param((parseFloat(p_tickstartvalue.get())).toFixed(get_decimal_places(p_tickstartvalue.get())));
+dia.TextEntry(1, tickstartvaluestr);
 dia.Spacer(8).Text(_("Increment:"));
-dia.SpinValue(p_tickincrementvalue, -2000000000000, 2000000000000, 1);
+var tickincrementvaluestr = new Param((parseFloat(p_tickincrementvalue.get())).toFixed(get_decimal_places(p_tickincrementvalue.get())));
+dia.TextEntry(1, tickincrementvaluestr);
 dia.EndBox().NewlineC();
 
 
@@ -160,8 +171,9 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 	var baseline = p_baseline.get();
 	var ticklabel = p_ticklabel.get();
 	var labeldist = p_labeldist.get();
-	var tickstartvalue = p_tickstartvalue.get();
-	var tickincrementvalue = p_tickincrementvalue.get();
+	var tickstartvalue = parseFloat(tickstartvaluestr.get().replace(',','.'));
+	var tickincrementvalue = parseFloat(tickincrementvaluestr.get().replace(',','.'));
+	var decimal_places = Math.max(get_decimal_places(tickstartvalue), get_decimal_places(tickincrementvalue));
 	var textsize = p_textsize.get();
 	var rotatetext = p_rotatetext.get();
 	
@@ -215,7 +227,7 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 			hpgl.LineTo(x_n * (size + ticklen), y_n * (size + ticklen));
 			hpgl.Finish();
 			if (ticklabel && !(fullCircle && i == numticks - 1)) {
-				var t = get_text_engraving(tickstartvalue + i*tickincrementvalue, textsize);
+				var t = get_text_engraving(tickstartvalue + i*tickincrementvalue, decimal_places, textsize);
 	
 				if(rotatetext){
 					t.Rotate( 90 - akt_phi*180/Math.PI );
@@ -255,7 +267,7 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 			hpgl.LineTo(x, ticklen);
 			hpgl.Finish();
 			if (ticklabel) {
-				var t = get_text_engraving(tickstartvalue + i*tickincrementvalue, textsize);
+				var t = get_text_engraving(tickstartvalue + i*tickincrementvalue, decimal_places, textsize);
 				frontpanel.AddElement(t, x, ticklen + labeldist);
 				g.AddElement(t);
 			}
