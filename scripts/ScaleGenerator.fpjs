@@ -223,7 +223,7 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 			if (linlog == 0) {
 				akt_phi = start_phi + (phi * i / (numticks-1));
 			} else {
-				akt_phi = start_phi + phi * Math.log(1 + 9 * i / (numticks-1) ) / Math.log(10);
+				akt_phi = start_phi + phi * Math.log(1 + i ) / Math.log(numticks);
 			}
 			var x_n = -Math.cos(akt_phi);
 			var y_n = Math.sin(akt_phi);
@@ -250,7 +250,8 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 					if (linlog == 0) {			
 						akt_sphi = akt_phi + sub_phi * (j+1) / (numsubticks +1);
 					} else {
-						akt_sphi = start_phi + phi * Math.log( 1 + 9 * (i + (j+1) / (numsubticks +1)) / (numticks-1) ) / Math.log(10);
+						akt_sphi = start_phi + phi * Math.log( (j+1)/(numsubticks + 1) + i + 1 ) / Math.log(numticks);
+						//sx = size * Math.log( (j+1)/(numsubticks + 1) + i + 1 )/Math.log(numticks);
 					}
 					var sx_n = -Math.cos(akt_sphi);
 					var sy_n = Math.sin(akt_sphi);
@@ -269,7 +270,7 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 			if (linlog == 0) {
 				x = i * size / (numticks-1);
 			} else {
-				x = size * Math.log(1 + (9) * i / (numticks-1) ) / Math.log(10);
+				x = size *Math.log(1 + i ) / Math.log(numticks);
 			}
 			hpgl.ChangePen(pen_tick);
 			hpgl.Start(x,0);
@@ -285,7 +286,7 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 					if (linlog == 0) {			
 						sx = size * (i + (j+1) / (numsubticks +1)) / (numticks-1);
 					} else {
-						sx = size *  Math.log( 1 + 9 * (i + (j+1) / (numsubticks +1)) / (numticks-1) ) / Math.log(10);
+						sx = size * Math.log( (j+1)/(numsubticks + 1) + i + 1 )/Math.log(numticks);
 					}
 					hpgl.ChangePen(pen_subtick);
 					hpgl.Start(sx, 0);
