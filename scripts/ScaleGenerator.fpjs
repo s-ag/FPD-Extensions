@@ -89,11 +89,15 @@ if(typeof(p_tickstartvalue.get()) === 'number') {
 dia.VSpacer(5).Newline().Spacer(10);
 dia.Box().NewlineC();
 
+var bottomText = "";
 if (is_new) {
 	dia.Text(_("Create new scale:"));
+	dia.NewlineC().VSpacer(10).NewlineC();
+	dia.Text(_("To change the scale properties afterwards, \nhighlight the scale and click on the 'Create scale' button again in the toolbar."));
 } else {
-	dia.Text(_("Edit selected scale:"));
+	dia.Text(_("Edit selected scale:"));	
 }
+
 
 dia.VSpacer(5).NewlineC().Divider().VSpacer(10).NewlineC();
 
@@ -156,9 +160,20 @@ dia.VSpacer(10).EndBox();
 
 dia.NewlineC();
 dia.Divider().NewlineC();
+
+dia.BoxC().NewlineC();
+dia.Text(_("Find out more in the online help:"));
+dia.NewlineC();
+dia.Text(_("https://www.schaeffer-ag.de/fpd-doc/en/fpd_Elements_Engraving_Scale.htm"));
+dia.NewlineC().VSpacer(10);
+dia.EndBox().Newline().VSpacer(10);
+
+
 dia.BoxC().VSpacer(10).NewlineC();
 dia.Spacer(0).DlgButton(0, _("Cancel")).Spacer(5).DlgButton(1, _("Ok")).Spacer(0);
 dia.EndBox().Spacer(10).VSpacer(10);
+
+
 
 if (1 == dia.Show()) {	// "Ok" button pressed
 	var shape = p_shape.get();
