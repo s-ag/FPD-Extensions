@@ -1,4 +1,4 @@
-﻿/***************************************************************
+/***************************************************************
  *  (c) 2013-2015 SKAARHOJ K/S, www.skaarhoj.com
  *  Author: Kasper Skårhøj <kasper@skaarhoj.com>
  *
@@ -235,8 +235,10 @@ function showUI()	{
 	var enclosureType = new Param(C_SchaefferHousings_UI_type-1);
 	d.Spacer(25).Text(_("Choose type of enclosure:")).NewlineC();
 	d.Spacer(25).RadioBox(enclosureType, _(" \nHousing with side profiles\nHousing with enclosure profiles")).Spacer(25).Newline();
-	d.VSpacer(0).NewlineC();
-
+	d.VSpacer(10).NewlineC();
+	d.Spacer(25).Text(_("More information on enclosures:")).NewlineC();
+	d.Spacer(25).Text(_("https://www.schaeffer-ag.de/en/housings"));
+	d.NewlineC().VSpacer(10).NewlineC();
 	d.Divider().NewlineC();
 
 	// And an "Ok" button, which, when pressed, will close
@@ -272,8 +274,6 @@ function showUI()	{
         if (enclosureType.get()+1==2)	{
             d.Spacer(25).Text(_("Housing Profile:")).NewlineC();
             d.Spacer(25).RadioBox(HProfile, _(" Type \nHP 1 (slot panels) \nHP 2 (screw in top/bottom panels) \nHP 1 and 2 combo")).Newline();
-			d.Spacer(25).Text(_("Please find our enclosure manual on our website for more detailed information.")).Spacer(0).NewlineC();
-			d.Spacer(25).Text(_("www.frontpanelexpress.com/products/enclosures/")).Spacer(0).NewlineC();
 			d.Spacer(25).NewlineC(); //no difference...
 			d.VSpacer(20).Newline();
 			//https://www.schaeffer-ag.de/fileadmin/user_upload/Downloads/Handbuecher_Datenblaetter/PDFs/Housingassemblymanual.pdf
