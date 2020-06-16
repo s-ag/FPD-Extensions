@@ -165,7 +165,7 @@ if(is_new) {
 }
 dia.Text(_("Find out more in the online help:"));
 dia.NewlineC();
-dia.Text(_("https://www.schaeffer-ag.de/fpd-doc/en/fpd_Elements_Engraving_Scale.htm"));
+dia.Text(_("https://www.schaeffer-ag.de/fpd-doc/en/fpd_elements_engraving_scale.htm"));
 dia.NewlineC().VSpacer(10);
 dia.EndBox().Newline().VSpacer(10);
 
