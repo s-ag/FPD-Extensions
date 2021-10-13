@@ -211,7 +211,7 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 	}
 		
 	if (ticklabel) {
-		var g = new Group("scale");
+		var g = new Group("labels");
 	}
 
 	var hpgl = new HpglEngraving("hpgl-canvas1", "", hpgl_center, 100, 0, 0);
@@ -311,10 +311,12 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 	}
 	var element = hpgl;
 	if (ticklabel) {
-		g.AddElement(hpgl);
-		g.SetRefElement(hpgl);
-		frontpanel.AddElement(g, 0, 0);
-		element = g;
+		var s = new Group("scale");
+		s.AddElement(g);
+		s.AddElement(hpgl);
+		s.SetRefElement(hpgl);
+		frontpanel.AddElement(s, 0, 0);
+		element = s;
 	}
 	
 	// Save settings to ExtInfo
