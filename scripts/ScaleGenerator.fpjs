@@ -22,7 +22,7 @@ function get_decimal_places(dbl_str_in) {
 	var dot_idx = dbl_str_in.indexOf('.');
 	if(dot_idx == -1)
 		return 0;
-	return dbl_str_in.length - dot_idx -1;
+	return dbl_str_in.length - dot_idx - 1;
 }
 
 // Needs a focussed frontpanel.
@@ -56,7 +56,7 @@ if ( sel.length == 1 && (sel[0].IsGroup() || sel[0].IsHpglEngraving()) ) {
 	var ei = sel[0].ExtInfo().split("|&#");
 	alt_x = sel[0].X(); alt_y = sel[0].Y();
 	if (ei.length == 2 && ei[0] == "ScaleGen") {
-		settings = extend( settings, eval(ei[1]) );
+		settings = extend(settings, eval(ei[1]));
 		is_new = false;
 	}
 }
@@ -101,11 +101,11 @@ dia.VSpacer(5).NewlineC().Divider().VSpacer(10).NewlineC();
 dia.RadioBox(p_shape, _("Shape of scale:\nRound\nLinear")).Spacer(25).NewlineC();
 
 dia.VSpacer(10).BoxC().NewlineC();
-dia.Text(_("Radius resp. Length:")).SpinValue(p_size, 0, 10000, 1).Spacer(3).Text(__("mm"));
+dia.Text(_("Radius resp. Length:")).SpinValue(p_size, 0.1, 10000, 0.5).Spacer(3).Text(__("mm"));
 dia.VSpacer(5).NewlineC();
-dia.Text(_("Starting angle:")).SpinValue(p_startangle, -360, 360, 5).Spacer(3).Text(__("deg"));
+dia.Text(_("Starting angle:")).SpinValue(p_startangle, -360.0, 360.0, 5.0).Spacer(3).Text(__("deg"));
 dia.VSpacer(5).NewlineC();
-dia.Text(_("End angle:")).SpinValue(p_endangle, -360, 360, 5).Spacer(3).Text(__("deg"));
+dia.Text(_("End angle:")).SpinValue(p_endangle, -360.0, 360.0, 5.0).Spacer(3).Text(__("deg"));
 dia.EndBox().NewlineC();
 
 
@@ -119,10 +119,10 @@ dia.VSpacer(15).EndBox();
 
 dia.BoxC().NewlineC();
 dia.Spacer(8).Text(_("Length:"));
-dia.SpinValue(p_ticklen, 0, 10000, 1).Spacer(3).Text(__("mm"));
+dia.SpinValue(p_ticklen, 0.1, 10000, 0.5).Spacer(3).Text(__("mm"));
 dia.Spacer(12).VSpacer(5).NewlineC();
 dia.Spacer(8).Text(_("Length:"));
-dia.SpinValue(p_subticklen, 0, 10000, 1).Spacer(3).Text("mm");
+dia.SpinValue(p_subticklen, 0.1, 10000, 0.5).Spacer(3).Text("mm");
 dia.Spacer(12).VSpacer(15).EndBox().NewlineC();
 
 
@@ -146,7 +146,7 @@ dia.EndBox().NewlineC();
 
 
 dia.BoxC().VSpacer(5).NewlineC().Text(_("Label spacing:"));
-dia.SpinValue(p_labeldist, 0, 10000, 1).Spacer(3).Text("mm");
+dia.SpinValue(p_labeldist, 0.1, 10000, 0.5).Spacer(3).Text("mm");
 dia.VSpacer(5).NewlineC();
 dia.Text(_("Text size:")).SpinValue(p_textsize, 0.1, 10000, 0.5)
 dia.Spacer(3).Text(_("mm"));
@@ -189,9 +189,9 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 	var baseline = p_baseline.get();
 	var ticklabel = p_ticklabel.get();
 	var labeldist = p_labeldist.get();
-	var tickstartnormed = p_tickstartvalue.get().replace(',','.');
+	var tickstartnormed = p_tickstartvalue.get().replace(',', '.');
 	var tickstartvalue = parseFloat(tickstartnormed);
-	var tickincrementnormed = p_tickincrementvalue.get().replace(',','.');
+	var tickincrementnormed = p_tickincrementvalue.get().replace(',', '.');
 	var tickincrementvalue = parseFloat(tickincrementnormed);
 	var decimal_places = Math.max(get_decimal_places(tickstartnormed), get_decimal_places(tickincrementnormed));
 	var textsize = p_textsize.get();
@@ -211,12 +211,12 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 	}
 		
 	if (ticklabel) {
-		var g = new Group("scale");
+		var g = new Group("labels");
 	}
 
 	var hpgl = new HpglEngraving("hpgl-canvas1", "", hpgl_center, 100, 0, 0);
 	hpgl.SetRefPoint(hpgl_file);
-	frontpanel.AddElement(hpgl,0,0);
+	frontpanel.AddElement(hpgl, 0, 0);
 	var pen_tick =  0;
 	if (numsubticks > 0) var pen_subtick = hpgl.DefinePen(engrave_jet_black, engraver_0_2mm);
 	var pen_base = hpgl.DefinePen(engrave_jet_black, engraver_0_2mm);
@@ -224,38 +224,38 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 
 		
 		// Round scale
-	    	var phi = (endangle - startangle) * Math.PI / 180;
+		var phi = (endangle - startangle) * Math.PI / 180;
 		var sub_phi = phi / (numticks - 1);
-		var start_phi = startangle * Math.PI /180;   
+		var start_phi = startangle * Math.PI / 180;
 
 		var x_start, y_start;
 		var akt_phi;
 		for (i = 0; i < numticks; ++i) {
-			akt_phi = start_phi + (phi * i / (numticks-1));
+			akt_phi = start_phi + (phi * i / (numticks - 1));
 			
 			var x_n = -Math.cos(akt_phi);
 			var y_n = Math.sin(akt_phi);
-			var x = x_n * size; var y= y_n * size;
+			var x = x_n * size; var y = y_n * size;
 			if (i == 0) {
 				x_start = x; y_start = y;
 			}
 			hpgl.ChangePen(pen_tick);
-			hpgl.Start(x,y);
+			hpgl.Start(x, y);
 			hpgl.LineTo(x_n * (size + ticklen), y_n * (size + ticklen));
 			hpgl.Finish();
 			if (ticklabel && !(fullCircle && i == numticks - 1)) {
-				var t = get_text_engraving(tickstartvalue + i*tickincrementvalue, decimal_places, textsize);
+				var t = get_text_engraving(tickstartvalue + i * tickincrementvalue, decimal_places, textsize);
 	
 				if(rotatetext){
-					t.Rotate( 90 - akt_phi*180/Math.PI );
+					t.Rotate(90 - akt_phi * 180 / Math.PI);
 				}
-				frontpanel.AddElement(t,x_n * (size + ticklen + labeldist), y_n * (size + ticklen + labeldist));
+				frontpanel.AddElement(t, x_n * (size + ticklen + labeldist), y_n * (size + ticklen + labeldist));
 				g.AddElement(t);
 			}
-			if ( i < (numticks-1) ) {
+			if ( i < (numticks - 1) ) {
 				var akt_sphi;
-				for (j=0; j<numsubticks; j++) {
-					akt_sphi = akt_phi + sub_phi * (j+1) / (numsubticks +1);
+				for (j = 0; j < numsubticks; j++) {
+					akt_sphi = akt_phi + sub_phi * (j + 1) / (numsubticks + 1);
 					var sx_n = -Math.cos(akt_sphi);
 					var sy_n = Math.sin(akt_sphi);
 					hpgl.ChangePen(pen_subtick);
@@ -270,20 +270,20 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 		x_start = y_start = 0;
 		var x;
 		for (i = 0; i < numticks; ++i) {
-			x = i * size / (numticks-1);
+			x = i * size / (numticks - 1);
 			
 			hpgl.ChangePen(pen_tick);
-			hpgl.Start(x,0);
+			hpgl.Start(x, 0);
 			hpgl.LineTo(x, ticklen);
 			hpgl.Finish();
 			if (ticklabel) {
-				var t = get_text_engraving(tickstartvalue + i*tickincrementvalue, decimal_places, textsize);
+				var t = get_text_engraving(tickstartvalue + i * tickincrementvalue, decimal_places, textsize);
 				frontpanel.AddElement(t, x, ticklen + labeldist);
 				g.AddElement(t);
 			}
-			if ( i < (numticks-1) ) {
-				for (j=0; j<numsubticks; j++) {
-					sx = size * (i + (j+1) / (numsubticks +1)) / (numticks-1);
+			if ( i < (numticks - 1) ) {
+				for (j = 0; j < numsubticks; j++) {
+					sx = size * (i + (j + 1) / (numsubticks + 1)) / (numticks - 1);
 					hpgl.ChangePen(pen_subtick);
 					hpgl.Start(sx, 0);
 					hpgl.LineTo(sx, subticklen);
@@ -298,23 +298,25 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 		hpgl.Start(x_start, y_start);
 		if (shape == 0) {
 			if(fullCircle) {
-				hpgl.ArcToMP(-x,-y, 0,0, (startangle > endangle)?1:0);
-				hpgl.ArcToMP(x,y, 0,0, (startangle > endangle)?1:0);
+				hpgl.ArcToMP(-x, -y, 0, 0, (startangle > endangle) ? 1 : 0);
+				hpgl.ArcToMP(x, y, 0, 0, (startangle > endangle) ? 1 : 0);
 			}
 			else {
-				hpgl.ArcToMP(x,y, 0,0, (startangle > endangle)?1:0);
+				hpgl.ArcToMP(x, y, 0, 0, (startangle > endangle) ? 1 : 0);
 			}
 		} else {
-			hpgl.LineTo(size,0);
+			hpgl.LineTo(size, 0);
 		}			
 		hpgl.Finish();
 	}
 	var element = hpgl;
 	if (ticklabel) {
-		g.AddElement(hpgl);
-		g.SetRefElement(hpgl);
-		frontpanel.AddElement(g,0,0);
-		element = g;
+		var s = new Group("scale");
+		s.AddElement(g);
+		s.AddElement(hpgl);
+		s.SetRefElement(hpgl);
+		frontpanel.AddElement(s, 0, 0);
+		element = s;
 	}
 	
 	// Save settings to ExtInfo
@@ -333,8 +335,8 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 	settings["TickIncrementValue"] = tickincrementvalue.toFixed(decimal_places);
 	settings["TextSize"] = textsize;
 	settings["RotateText"] = rotatetext; 
-	element.SetExtInfo("ScaleGen|&#"+settings.toSource());
-	if (!is_new) {
+	element.SetExtInfo("ScaleGen|&#" + settings.toSource());
+	if ( !is_new ) {
 		frontpanel.RemoveElement(sel[0]);
 	}
 	element.MoveTo(alt_x, alt_y);
