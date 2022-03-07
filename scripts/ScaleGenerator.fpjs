@@ -119,7 +119,7 @@ dia.VSpacer(15).EndBox();
 
 dia.BoxC().NewlineC();
 dia.Spacer(8).Text(_("Length:"));
-dia.SpinValue(p_ticklen, 0.1, 10000, 0.5).Spacer(3).Text(__("mm"));
+dia.SpinValue(p_ticklen, 0.0, 10000, 0.5).Spacer(3).Text(__("mm"));
 dia.Spacer(12).VSpacer(5).NewlineC();
 dia.Spacer(8).Text(_("Length:"));
 dia.SpinValue(p_subticklen, 0.1, 10000, 0.5).Spacer(3).Text("mm");
@@ -239,10 +239,12 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 			if (i == 0) {
 				x_start = x; y_start = y;
 			}
-			hpgl.ChangePen(pen_tick);
-			hpgl.Start(x, y);
-			hpgl.LineTo(x_n * (size + ticklen), y_n * (size + ticklen));
-			hpgl.Finish();
+			if(ticklen > 0) {
+				hpgl.ChangePen(pen_tick);
+				hpgl.Start(x, y);
+				hpgl.LineTo(x_n * (size + ticklen), y_n * (size + ticklen));
+				hpgl.Finish();
+			}
 			if (ticklabel && !(fullCircle && i == numticks - 1)) {
 				var t = get_text_engraving(tickstartvalue + i * tickincrementvalue, decimal_places, textsize);
 	
@@ -271,11 +273,12 @@ if (1 == dia.Show()) {	// "Ok" button pressed
 		var x;
 		for (i = 0; i < numticks; ++i) {
 			x = i * size / (numticks - 1);
-			
-			hpgl.ChangePen(pen_tick);
-			hpgl.Start(x, 0);
-			hpgl.LineTo(x, ticklen);
-			hpgl.Finish();
+			if(ticklen > 0) {
+				hpgl.ChangePen(pen_tick);
+				hpgl.Start(x, 0);
+				hpgl.LineTo(x, ticklen);
+				hpgl.Finish();
+			}
 			if (ticklabel) {
 				var t = get_text_engraving(tickstartvalue + i * tickincrementvalue, decimal_places, textsize);
 				frontpanel.AddElement(t, x, ticklen + labeldist);
